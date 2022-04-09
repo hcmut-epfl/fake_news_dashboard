@@ -1,0 +1,8 @@
+<div class="card">
+    <h5 class="card-header">{{post.created.date()}}</h5>
+    <div class="card-body">
+      <h5 class="card-title"><a href="{{url_for('posts.post_detail',slug=post.slug)}}">{{post.title}}</a> </h5>
+      <p class="card-text">{{post.body}}</p>
+      <a href="{{url_for('posts.post_detail',slug=post.slug)}}" class="btn btn-primary">Read more...</a>
+    </div>
+  </div>

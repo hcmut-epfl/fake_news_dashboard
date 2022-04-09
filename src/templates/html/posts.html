@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Posts list
+{% endblock %}
+
+{% block content %}
+    <div class="col-lg-8">
+        <h3>Medical News Check on Facebook</h3>
+        {% for post in pages.items %}
+            <a href="{{url_for('posts.post_detail', id=post.id)}}" class="post-anchor-wrapper post">
+                <div class="card mb-3" style="max-width: 1000px;">
+                <div class="row g-0">
+                    <!-- <div class="col-md-4">
+                        <img src="{{post.thumnail}}" class="img-fluid rounded-start h-100" 
+                        style="max-height:100%; max-width:100%; object-fit: cover;  overflow: hidden;" alt="...">
+                    </div> -->
+                    <div class="col-md-8">
+                        <div class="card-body">
+                        <!-- <h5 class="card-title">{{post.title}}</h5> -->
+                        <p class="card-text">{{post.shortened_text}}</p>
+                        <!-- <span class="tag">{{post.rating_tag}}</span> -->
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="col-lg-4 d-none d-lg-block">
+        <h3>Up next for you</h3>
+
+        <div>
+            {% for post in pages.items[-2:] %}
+
+            <a href="{{url_for('posts.post_detail', id=post.id)}}" class="post-anchor-wrapper post">
+                <div class="card mb-3" style="width: 18rem;">
+                    <!-- <img src="{{post.thumnail}}" class="card-img-top" alt="..."> -->
+                    <div class="card-body">
+                      <!-- <h5 class="card-title">{{post.title}}</h5> -->
+                      <p class="card-text">{{post.shortened_text}}</p>
+                    </div>
+                  </div>
+            </a>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <nav aria-label="...">
+      <ul class="pagination">
+          <li class="page-item {% if not pages.has_prev %} disabled {% endif %}">
+              <a class="page-link" href="./?page={{ pages.prev_num }}">Previous</a>
+          </li>
+
+          {% for page in pages.iter_pages() %}
+          {% if page %}
+              <li class="page-item {% if page == pages.page %} active {% endif %}">
+                  <a class="page-link" href="./?page={{ page }}">{{ page }} <span class="sr-only">(current)</span></a>
+              </li>
+              {%else%}
+              <li class="page-item {% if page == pages.page %} active {% endif %}">
+                <a class="page-link" href="#">... <span class="sr-only">(current)</span></a>
+            </li>              
+            {%endif%}
+          {% endfor %}
+
+          <li class="page-item {% if not pages.has_next %} disabled {% endif %}">
+              <a class="page-link" href="./?page={{ pages.next_num }}">Next</a>
+          </li>
+      </ul>
+  </nav>
+
+    
+{% endblock %}

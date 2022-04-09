@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}
+   {{ post.title }}
+{% endblock %}
+
+{% block content %}
+<div class="col-8 mx-auto">
+   <div class="wp-block-snopes-fact-check-claim card mb-3 header">
+      <div class="claim-text card-body pb-0">
+         <!-- {{Title}} -->
+         <h3 class="title">
+            Facebook Post
+         </h3>
+         <!-- {{Subtitle}} -->
+         <p class="subtitle">
+            {{post.text}}
+         </p>
+         <!-- {{Author}} -->
+         <!-- <b class="d-block">By Facebook</b> -->
+         <span class="published-date">Created at {{post.time}}</span>
+         <br>
+         <br>
+
+         <!-- <div class="image-wrapper">
+            <img class="w-100" src="{{post.thumnail}}"/>
+         </div> -->
+      </div>
+   </div>
+   <div class="wp-block-snopes-fact-check-claim card mb-3">
+      <div class="card-header">
+         <h3 class="h6">Statistics</h3>
+      </div>
+      <div class="claim-text card-body">
+         <p>Reactions: {{post.reactions_count}}</p>
+         <p>Comments: {{post.comments_count}}</p>
+         <p>Shares: {{post.shares_count}}</p>
+      </div>
+   </div>
+   <div class="wp-block-snopes-fact-check-claim card mb-3">
+      <div class="card-header">
+         <h3 class="h6">Comments</h3>
+      </div>
+      <div class="claim-text card-body">
+         {{post.comments}}
+      </div>
+   </div>
+   <div
+      class="wp-block-snopes-fact-check-rating card mb-3"
+      data-component="claim-rating"
+      >
+      <div class="card-header">
+         <h3 class="h6">Rating</h3>
+      </div>
+      {% if post.claim_info|length>0 %}
+      <div class="card-body">
+         <div class="media position-relative">
+            <div class="avatar-md avatar-lg-large mr-3">
+               <figure class="figure w-50 mb-0">
+                  <img alt="Mixture" class="figure-image img-responsive img-fluid w-50" height="50px" 
+                       src="{% if post.true_news %}
+                       https://www.pikpng.com/pngl/m/27-278340_download-button-correct-png-clipart.png
+                       {% else %}
+                       https://esquilo.io/png/thumb/7H0a9WDCxlqzXxs-Wrong-Sign-PNG-File.png
+                       {% endif %}"
+                       width="50px">
+                  </img>
+               </figure>
+            </div>
+            <div class="media-body d-flex flex-column align-self-center">
+               <span class="h3 rating-label-mixture">{{post.rating_text}}</span>
+            </div>
+         </div>
+      </div>
+      {% if post.true_news %}
+      <div class="claim-text card-body">
+         <span class="h6 mb-1">What's True</span>
+         <p>{{post.claim_info}}</p>
+      </div>
+      {% endif %}
+      {% if not post.true_news %}
+      <div class="claim-text card-body">
+         <span class="h6 mb-1">What's False</span>
+         <p>{{post.claim_info}}</p>
+      </div>
+      {% endif %}
+      <!-- {% if post.ctx_info|length>0%}
+      <div class="claim-text card-body">
+         <span class="h6 mb-1">Context</span>
+         <p>{{post.ctx_info}}</p>
+      </div>
+      {% endif %} -->
+      {%else%}
+      <div class="claim-text card-body">
+         <span class="h6 mb-1">Unverified</span>
+         <p>This post is currently unverified or the claim statement is still empty.</p>
+      </div>
+      {%endif%}
+      {%if current_user.is_authenticated %}
+      <div class="card-body">
+         <span class="h6 mb-1">For Admin only</span>
+         <p>Edit the fact or content of this post</p>
+         <form action="{{ url_for('posts.post_update', id=post.id) }}">
+            <button class="btn btn-primary">Edit</button>
+         </form>
+      </div>
+      {%endif%}
+   </div>
+   <div class="wp-block-snopes-fact-check-claim card mb-3">
+      <div class="card-header">
+         <h3 class="h6">Origin</h3>
+      </div>
+      <div class="single-body card-body rich-text">
+         <p>Original source: <a href={{post.url}}>{{post.url}}</a></p>
+      </div>
+   </div>
+   <form action="{{ url_for('posts.post_detail', id=post.id+1) }}">
+      <button class="btn btn-primary">Next</button>
+   </form>
+</div>
+
+{% endblock %}

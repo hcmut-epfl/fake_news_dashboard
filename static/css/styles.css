@@ -1,0 +1,11 @@
+.login-panel{
+    border: 1px solid #dddddd;
+    border-radius: 2px;
+    position: fixed;
+    right: 50px;
+    bottom: 30px;
+    padding: 10px;
+}
+
+
+.single-body figure{max-width: 100%;}
