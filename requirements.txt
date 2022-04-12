@@ -11,3 +11,4 @@ tqdm==4.63.0
 WTForms==3.0.0
 gunicorn==19.9.0
 jinja2==2.11.3
+markupsafe==2.0.1
