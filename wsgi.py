@@ -1,3 +1,1 @@
-from . import getApp
-
-app = getApp()
+from src.app import app
