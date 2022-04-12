@@ -21,10 +21,6 @@ posts = Blueprint(
     template_folder='templates'
 )
 
-posts.route('/', methods=['GET'])
-def index():
-    return render_template('index.html')
-
 @posts.route('/create', methods=['POST', 'GET'])
 @login_required
 def post_create():
