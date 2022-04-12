@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+   Create new post
+{% endblock %}
+
+{% block content %}
+<style>
+  .pad {
+    padding: 10px;
+  }
+</style>
+<div class="col-md-8">
+    <h1>Export News</h1>
+  </div>
+  <div class="col-md-8 pad">
+    <form action="{{ url_for('posts.export_csv') }}">
+        <button class="btn btn-primary">Export as CSV</button>
+    </form>
+  </div>
+  <div class="col-md-8 pad">
+    <form action="{{ url_for('posts.export_json') }}">
+        <button class="btn btn-primary">Export as JSON</button>
+    </form>
+  </div>
+{% endblock %}

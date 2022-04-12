@@ -1,11 +1,14 @@
 import json
+import pandas as pd
 from flask import (
     Blueprint,
     render_template,
     request,
     redirect,
     url_for,
-    jsonify
+    jsonify,
+    send_file,
+    Response
 )
 from flask_security import login_required
 from src.model.post import Post
@@ -128,3 +131,34 @@ def post_batch_upload():
         message = 'Successfully uploaded!'
             
     return render_template('html/post_batch_upload.html', success=success, message=message)
+
+@posts.route('/export', methods=['GET'])
+@login_required
+def export():
+    return render_template('html/export.html')
+
+@posts.route('/export/csv', methods=['GET'])
+@login_required
+def export_csv():
+    posts = Post.query.all()
+    post_dict = [p.__dict__ for p in posts]
+    df = pd.DataFrame(post_dict).drop(['_sa_instance_state', 'shortened_text'], axis=1)
+    csv_content = df.to_csv(index=False)
+    response = Response(u'\uFEFF'.encode('utf-8') + bytes(csv_content, 'utf-8'), mimetype='text/csv')
+    response.headers.set("Content-Disposition",
+                        "attachment",
+                        filename='news.csv')
+    return response
+
+@posts.route('/export/json', methods=['GET'])
+@login_required
+def export_json():
+    posts = Post.query.all()
+    post_dict = [p.__dict__ for p in posts]
+    df = pd.DataFrame(post_dict).drop(['_sa_instance_state', 'shortened_text'], axis=1)
+    json_content = df.to_json(orient='records')
+    response = Response(u'\uFEFF'.encode('utf-8') + bytes(json_content, 'utf-8'), mimetype='text/json')
+    response.headers.set("Content-Disposition",
+                        "attachment",
+                        filename='news.json')
+    return response

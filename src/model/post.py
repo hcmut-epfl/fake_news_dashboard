@@ -15,7 +15,7 @@ class Post(db.Model):
     claim_info = db.Column(db.Text)
 
     def __init__(self, *args, **kwargs):
-        kwargs['shortened_text'] = kwargs['text'][:50]
+        kwargs['shortened_text'] = kwargs['text'][:100]
         kwargs['comments'] = self.modify_comments(kwargs['comments'])
         super().__init__(
             *args, **kwargs
