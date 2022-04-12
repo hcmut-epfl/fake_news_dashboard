@@ -53,7 +53,7 @@ def post_create():
         except:
             print("Cannot add new post to the database.")
 
-        return redirect(url_for('posts.post_detail'))
+        return redirect(url_for('posts.post_create', success=True))
 
     return render_template('html/post_create.html', form=form)
 

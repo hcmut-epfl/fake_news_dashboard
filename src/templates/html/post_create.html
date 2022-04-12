@@ -8,6 +8,11 @@
     <div class="col-md-8">
       <h1>Create new post</h1>
     </div>
+    {%if success%}
+    <div class="col-md-8">
+        <p style="color:green;">{{message}}</p>
+    </div>
+    {%endif%}
     <div class="col-md-8">
         <form action="{{ url_for('posts.post_create')}}" method="POST">
             {% for field in form %}
