@@ -25,6 +25,8 @@ posts = Blueprint(
 @login_required
 def post_create():
     form = PostForm()
+    success = False
+    message = ''
     if request.method == 'POST':
         text = request.form.get('text')
         url = request.form.get('url')
@@ -52,10 +54,13 @@ def post_create():
             db.session.commit()
         except:
             print("Cannot add new post to the database.")
+        
+        success = True
+        message = 'Add post successfully'
+        
+        return redirect(url_for('posts.post_create'))
 
-        return redirect(url_for('posts.post_create', success=True))
-
-    return render_template('html/post_create.html', form=form)
+    return render_template('html/post_create.html', form=form, success=success, message=message)
 
 @posts.route('/')
 def posts_list():
