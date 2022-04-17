@@ -12,6 +12,8 @@
 </style>
 <div class="col-md-8">
     <h1>Export News</h1>
+    <br>
+    <p>Note that only verified news (as either True or Fake) are included in the exported files.</p>
   </div>
   <div class="col-md-8 pad">
     <form action="{{ url_for('posts.export_csv') }}">

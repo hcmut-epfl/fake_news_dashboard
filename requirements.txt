@@ -13,4 +13,5 @@ gunicorn==19.9.0
 jinja2==2.11.3
 markupsafe==2.0.1
 email_validator
-psycopg2
+psycopg2-binary
+pyvi

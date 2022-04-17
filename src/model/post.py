@@ -11,6 +11,8 @@ class Post(db.Model):
     reactions_count = db.Column(db.Integer)
     shares_count = db.Column(db.Integer)
     comments = db.Column(db.Text)
+    group_name = db.Column(db.Text)
+    medical_news = db.Column(db.Boolean)
     true_news = db.Column(db.Boolean)
     claim_info = db.Column(db.Text)
 

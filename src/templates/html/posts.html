@@ -1,76 +1,110 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Posts list
+Posts list
 {% endblock %}
 
 {% block content %}
-    <div class="col-lg-8">
-        <h3>Medical News Check on Facebook</h3>
-        {% for post in pages.items %}
-            <a href="{{url_for('posts.post_detail', id=post.id)}}" class="post-anchor-wrapper post">
-                <div class="card mb-3" style="max-width: 1000px;">
-                <div class="row g-0">
-                    <!-- <div class="col-md-4">
-                        <img src="{{post.thumnail}}" class="img-fluid rounded-start h-100" 
-                        style="max-height:100%; max-width:100%; object-fit: cover;  overflow: hidden;" alt="...">
-                    </div> -->
-                    <div class="col-md-8">
-                        <div class="card-body">
-                        <!-- <h5 class="card-title">{{post.title}}</h5> -->
-                        <p class="card-text">{{post.shortened_text}}</p>
-                        <!-- <span class="tag">{{post.rating_tag}}</span> -->
-                        </div>
-                    </div>
+<div class="col-lg-8">
+    <div class="row g-0">
+        <div class="col-lg-8">
+            <h3>News Check</h3>
+        </div>
+        <div class="col-lg-4">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" style="width: 200px !important; height: 37px !important;">{{ filter_title }}</button>
+                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                    style="height: 37px !important;">
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href=".">All News</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item {{'font-weight-bold' if filter=='medical'}}" href="./?filter=medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Medical</a>
+                    <a class="dropdown-item {{'font-weight-bold' if filter=='non_medical'}}" href="./?filter=non_medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Not Medical</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item {{'font-weight-bold' if type=='true'}}" href="./?type=true{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">True News</a>
+                    <a class="dropdown-item {{'font-weight-bold' if type=='fake'}}" href="./?type=fake{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">Fake News</a>
+                    <div class="dropdown-divider"></div>
+                    {% for g in groups %}
+                    <a class="dropdown-item {{'font-weight-bold' if group==g}}" href="./?group={{g}}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">{{g}}</a>
+                    {% endfor %}
                 </div>
-                </div>
-            </a>
-        {% endfor %}
-    </div>
-
-    <div class="col-lg-4 d-none d-lg-block">
-        <h3>Up next for you</h3>
-
-        <div>
-            {% for post in pages.items[-2:] %}
-
-            <a href="{{url_for('posts.post_detail', id=post.id)}}" class="post-anchor-wrapper post">
-                <div class="card mb-3" style="width: 18rem;">
-                    <!-- <img src="{{post.thumnail}}" class="card-img-top" alt="..."> -->
-                    <div class="card-body">
-                      <!-- <h5 class="card-title">{{post.title}}</h5> -->
-                      <p class="card-text">{{post.shortened_text}}</p>
-                    </div>
-                  </div>
-            </a>
-            {% endfor %}
-
+            </div>
         </div>
     </div>
 
-    <nav aria-label="...">
-      <ul class="pagination">
-          <li class="page-item {% if not pages.has_prev %} disabled {% endif %}">
-              <a class="page-link" href="./?page={{ pages.prev_num }}">Previous</a>
-          </li>
+    {% for post in pages.items %}
+    <a href="{{url_for('posts.post_detail', id=post.id)}}" class="post-anchor-wrapper post">
+        <div class="card mb-3" style="max-width: 1000px;">
+            <div class="row g-0">
+                <!-- <div class="col-md-4">
+                        <img src="{{post.thumnail}}" class="img-fluid rounded-start h-100" 
+                        style="max-height:100%; max-width:100%; object-fit: cover;  overflow: hidden;" alt="...">
+                    </div> -->
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <!-- <h5 class="card-title">{{post.title}}</h5> -->
+                        <p class="card-text">{{post.shortened_text}}</p>
+                        {% if post.claim_info|length > 0 %}
+                        <span class="tag">{{'True' if post.true_news else 'Fake'}}</span>
+                        {%endif%}
+                        {% if post.group_name|length > 0 %}
+                        <span class="tag">{{post.group_name}}</span>
+                        {%endif%}
+                        <span class="tag">{{'Medical' if post.medical_news else 'Not Medical'}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
 
-          {% for page in pages.iter_pages() %}
-          {% if page %}
-              <li class="page-item {% if page == pages.page %} active {% endif %}">
-                  <a class="page-link" href="./?page={{ page }}">{{ page }} <span class="sr-only">(current)</span></a>
-              </li>
-              {%else%}
-              <li class="page-item {% if page == pages.page %} active {% endif %}">
-                <a class="page-link" href="#">... <span class="sr-only">(current)</span></a>
-            </li>              
-            {%endif%}
-          {% endfor %}
+<div class="col-lg-4 d-none d-lg-block">
+    <h3>Up next for you</h3>
 
-          <li class="page-item {% if not pages.has_next %} disabled {% endif %}">
-              <a class="page-link" href="./?page={{ pages.next_num }}">Next</a>
-          </li>
-      </ul>
-  </nav>
+    <div>
+        {% for post in pages.items[-2:] %}
 
-    
+        <a href="{{url_for('posts.post_detail', id=post.id)}}" class="post-anchor-wrapper post">
+            <div class="card mb-3" style="width: 18rem;">
+                <!-- <img src="{{post.thumnail}}" class="card-img-top" alt="..."> -->
+                <div class="card-body">
+                    <!-- <h5 class="card-title">{{post.title}}</h5> -->
+                    <p class="card-text">{{post.shortened_text}}</p>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+
+    </div>
+</div>
+
+<nav aria-label="...">
+    <ul class="pagination">
+        <li class="page-item {% if not pages.has_prev %} disabled {% endif %}">
+            <a class="page-link" href="./?page={{ pages.prev_num }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Previous</a>
+        </li>
+
+        {% for page in pages.iter_pages() %}
+        {% if page %}
+        <li class="page-item {% if page == pages.page %} active {% endif %}">
+            <a class="page-link" href="./?page={{ page }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">{{ page }} <span class="sr-only">(current)</span></a>
+        </li>
+        {%else%}
+        <li class="page-item {% if page == pages.page %} active {% endif %}">
+            <a class="page-link" href="#">... <span class="sr-only">(current)</span></a>
+        </li>
+        {%endif%}
+        {% endfor %}
+
+        <li class="page-item {% if not pages.has_next %} disabled {% endif %}">
+            <a class="page-link" href="./?page={{ pages.next_num }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Next</a>
+        </li>
+    </ul>
+</nav>
+
+
 {% endblock %}

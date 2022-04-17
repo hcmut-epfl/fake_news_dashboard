@@ -11,6 +11,7 @@ from flask import (
     Response
 )
 from flask_security import login_required
+from src.ml.medical_classifier import MedicalClassifier
 from src.model.post import Post
 from src.posts.forms import PostForm
 from src.app import db
@@ -28,6 +29,7 @@ def post_create():
     success = False
     message = ''
     if request.method == 'POST':
+        medical_classifier = MedicalClassifier()
         text = request.form.get('text')
         url = request.form.get('url')
         time = request.form.get('time')
@@ -37,7 +39,8 @@ def post_create():
         comments = request.form.get('comments')
         true_news = request.form.get('true_news')
         claim_info = request.form.get('claim_info')
-
+        medical_news = medical_classifier.predict([text])[0] == 1
+        group_name = request.form.get('group_name')
         try:
             post = Post(
                 text=text,
@@ -48,29 +51,67 @@ def post_create():
                 shares_count=shares_count,
                 comments=comments,
                 true_news=true_news,
-                claim_info=claim_info
+                claim_info=claim_info,
+                medical_news=medical_news,
+                group_name=group_name
             )
             db.session.add(post)
             db.session.commit()
-        except:
+            success = True
+            message = 'Add post successfully'
+        except Exception as e:
             print("Cannot add new post to the database.")
+            print(e)
+            success = False
+            message = 'Cannot add new post to the database'
         
-        success = True
-        message = 'Add post successfully'
-        
-        return redirect(url_for('posts.post_create'))
+        # return redirect(url_for('posts.post_create', success=success, message=message))
 
     return render_template('html/post_create.html', form=form, success=success, message=message)
 
 @posts.route('/')
 def posts_list():
     q = request.args.get('q')
-    print("q:",q)
+    filter_title = list()
+    
+    groups = db.session.query(Post.group_name).group_by(Post.group_name).all()
+    groups = [g[0] for g in groups]
+
     if q:
-        posts = Post.query.filter(Post.text.contains(q) |
-                Post.shortened_text.contains(q))
+        posts = Post.query.filter(Post.text.contains(q))
     else:
         posts = Post.query.order_by(Post.time.desc())
+
+    posts = Post.query
+
+    filter = request.args.get('filter')
+    if filter == "medical":
+        posts = posts.filter(Post.medical_news == True)
+        filter_title.append("Medical")
+    elif filter == "non_medical":
+        posts = posts.filter(Post.medical_news == False)
+        filter_title.append("Not Medical")
+    else:
+        filter = ''
+    
+    type = request.args.get('type')
+    if type == "fake":
+        posts = posts.filter(Post.claim_info != '').filter(Post.true_news == False)
+        filter_title.append("Fake")
+    elif type == "true":
+        posts = posts.filter(Post.claim_info != '').filter(Post.true_news == True)
+        filter_title.append("True")
+    else:
+        type = ''
+
+    group = request.args.get('group')
+    if group:
+        posts = posts.filter(Post.group_name == group)
+        filter_title.append(group)
+    else:
+        group = ''
+
+    filter_title = ', '.join(filter_title) if len(filter_title) > 0 else "All"
 
     page = request.args.get('page')
     if page and page.isdigit():
@@ -80,7 +121,16 @@ def posts_list():
     
     pages = posts.paginate(page=page, per_page=10)
 
-    return render_template('html/posts.html', posts=posts, pages=pages)
+    return render_template(
+        'html/posts.html',
+        posts=posts,
+        pages=pages,
+        filter=filter,
+        groups=groups,
+        group=group,
+        type=type,
+        filter_title=filter_title
+    )
 
 @posts.route('/<id>')
 def post_detail(id):
@@ -111,10 +161,16 @@ def post_batch_upload():
     success = False
     message = ''
     if request.method == 'POST':
+        
+        # Encoding the file
         f = request.files['file']
         bytes = f.read()
         uni = bytes.decode('utf-8')
         d = json.loads(uni)
+
+        model = MedicalClassifier()
+        group_name = request.form.get('group_name')
+        
         for post in d:
             post_dict = dict()
             post_dict['text'] = post['text']
@@ -124,14 +180,16 @@ def post_batch_upload():
             post_dict['comments_count'] = post['info']['comments']
             post_dict['shares_count'] = post['info']['shares']
             post_dict['comments'] = post['comments_full']
-            post_dict['true_news'] = None
+            post_dict['medical_news'] = model.predict([post_dict['text']])[0] == 1
+            post_dict['true_news'] = False
             post_dict['claim_info'] = ''
-            try:
-                post = Post(**post_dict)
-                db.session.add(post)
-                db.session.commit()
-            except:
-                print("Cannot add new post to the database.")
+            post_dict['group_name'] = group_name.title()
+            post = Post(**post_dict)
+            db.session.add(post)
+        try:
+            db.session.commit()
+        except:
+            print("Cannot add new post to the database.")
         success = True
         message = 'Successfully uploaded!'
             
@@ -148,6 +206,7 @@ def export_csv():
     posts = Post.query.all()
     post_dict = [p.__dict__ for p in posts]
     df = pd.DataFrame(post_dict).drop(['_sa_instance_state', 'shortened_text'], axis=1)
+    df = df[df['medical_news'] & (df['claim_info'] != '')].drop(['medical_news'], axis=1)
     csv_content = df.to_csv(index=False)
     response = Response(u'\uFEFF'.encode('utf-8') + bytes(csv_content, 'utf-8'), mimetype='text/csv')
     response.headers.set("Content-Disposition",
@@ -161,6 +220,7 @@ def export_json():
     posts = Post.query.all()
     post_dict = [p.__dict__ for p in posts]
     df = pd.DataFrame(post_dict).drop(['_sa_instance_state', 'shortened_text'], axis=1)
+    df = df[df['medical_news'] & (df['claim_info'] != '')].drop(['medical_news'], axis=1)
     json_content = df.to_json(orient='records')
     response = Response(u'\uFEFF'.encode('utf-8') + bytes(json_content, 'utf-8'), mimetype='text/json')
     response.headers.set("Content-Disposition",

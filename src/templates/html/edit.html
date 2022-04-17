@@ -8,6 +8,17 @@
     <div class="col-md-8">
         <h1>Edit post</h1>
     </div>
+    {%if message|length>0 %}
+        {%if success%}
+        <div class="col-md-8">
+            <p style="color:green;">{{message}}</p>
+        </div>
+        {%else%}
+        <div class="col-md-8">
+            <p style="color:red;">{{message}}</p>
+        </div>
+        {%endif%}
+    {%endif%}
     <div class="col-md-8">
         <form action="{{ url_for('posts.post_update', id=post.id)}}" method="POST">
             {% for field in form %}
