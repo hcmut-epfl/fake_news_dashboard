@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Posts list
+Project Fake News | HCMUT-EPFL
 {% endblock %}
 
 {% block content %}
@@ -21,14 +21,14 @@ Posts list
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href=".">All News</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item {{'font-weight-bold' if filter=='medical'}}" href="./?filter=medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Medical</a>
-                    <a class="dropdown-item {{'font-weight-bold' if filter=='non_medical'}}" href="./?filter=non_medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Not Medical</a>
+                    <a class="dropdown-item {{'font-weight-bold' if filter=='medical'}}" href="?filter=medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Medical</a>
+                    <a class="dropdown-item {{'font-weight-bold' if filter=='non_medical'}}" href="?filter=non_medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Not Medical</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item {{'font-weight-bold' if type=='true'}}" href="./?type=true{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">True News</a>
-                    <a class="dropdown-item {{'font-weight-bold' if type=='fake'}}" href="./?type=fake{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">Fake News</a>
+                    <a class="dropdown-item {{'font-weight-bold' if type=='true'}}" href="?type=true{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">True News</a>
+                    <a class="dropdown-item {{'font-weight-bold' if type=='fake'}}" href="?type=fake{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">Fake News</a>
                     <div class="dropdown-divider"></div>
                     {% for g in groups %}
-                    <a class="dropdown-item {{'font-weight-bold' if group==g}}" href="./?group={{g}}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">{{g}}</a>
+                    <a class="dropdown-item {{'font-weight-bold' if group==g}}" href="?group={{g}}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">{{g}}</a>
                     {% endfor %}
                 </div>
             </div>
@@ -85,13 +85,13 @@ Posts list
 <nav aria-label="...">
     <ul class="pagination">
         <li class="page-item {% if not pages.has_prev %} disabled {% endif %}">
-            <a class="page-link" href="./?page={{ pages.prev_num }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Previous</a>
+            <a class="page-link" href="?page={{ pages.prev_num }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Previous</a>
         </li>
 
         {% for page in pages.iter_pages() %}
         {% if page %}
         <li class="page-item {% if page == pages.page %} active {% endif %}">
-            <a class="page-link" href="./?page={{ page }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">{{ page }} <span class="sr-only">(current)</span></a>
+            <a class="page-link" href="?page={{ page }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">{{ page }} <span class="sr-only">(current)</span></a>
         </li>
         {%else%}
         <li class="page-item {% if page == pages.page %} active {% endif %}">
@@ -101,7 +101,7 @@ Posts list
         {% endfor %}
 
         <li class="page-item {% if not pages.has_next %} disabled {% endif %}">
-            <a class="page-link" href="./?page={{ pages.next_num }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Next</a>
+            <a class="page-link" href="?page={{ pages.next_num }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Next</a>
         </li>
     </ul>
 </nav>
