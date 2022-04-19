@@ -19,13 +19,14 @@ Project Fake News | HCMUT-EPFL
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href=".">All News</a>
+                    <a class="dropdown-item" href="/">All News</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item {{'font-weight-bold' if filter=='medical'}}" href="?filter=medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Medical</a>
                     <a class="dropdown-item {{'font-weight-bold' if filter=='non_medical'}}" href="?filter=non_medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Not Medical</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item {{'font-weight-bold' if type=='true'}}" href="?type=true{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">True News</a>
                     <a class="dropdown-item {{'font-weight-bold' if type=='fake'}}" href="?type=fake{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">Fake News</a>
+                    <a class="dropdown-item {{'font-weight-bold' if type=='unverified'}}" href="?type=unverified{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">Unverified</a>
                     <div class="dropdown-divider"></div>
                     {% for g in groups %}
                     <a class="dropdown-item {{'font-weight-bold' if group==g}}" href="?group={{g}}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">{{g}}</a>

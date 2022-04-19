@@ -11,6 +11,7 @@ from flask import (
     Response
 )
 from flask_security import login_required
+from sqlalchemy import true
 from src.ml.medical_classifier import MedicalClassifier
 from src.model.post import Post
 from src.posts.forms import PostForm
@@ -38,6 +39,7 @@ def post_create():
         shares_count = request.form.get('shares_count')
         comments = request.form.get('comments')
         true_news = request.form.get('true_news')
+        true_news = (true_news == 'y') if isinstance(true_news, str) else true_news
         claim_info = request.form.get('claim_info')
         medical_news = medical_classifier.predict([text])[0] == 1
         group_name = request.form.get('group_name')

@@ -11,4 +11,4 @@ class PostForm(Form):
     comments = TextAreaField('Comments')
     medical_news = BooleanField('Is this a medical news?')
     true_news = BooleanField('Is this a true news?')
-    claim_info = TextAreaField('Claims', description='You must input your claim to verify your confirmation')
+    claim_info = TextAreaField('Claims to verify your evaluation')
