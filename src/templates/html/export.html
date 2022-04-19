@@ -16,12 +16,12 @@ Export News | HCMUT-EPFL
     <p>Note that only verified news (as either True or Fake) are included in the exported files.</p>
   </div>
   <div class="col-md-8 pad">
-    <form action="{{ url_for('posts.export_csv') }}">
+    <form action="fakenews/export/csv">
         <button class="btn btn-primary">Export as CSV</button>
     </form>
   </div>
   <div class="col-md-8 pad">
-    <form action="{{ url_for('posts.export_json') }}">
+    <form action="fakenews/export/json">
         <button class="btn btn-primary">Export as JSON</button>
     </form>
   </div>

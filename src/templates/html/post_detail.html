@@ -100,7 +100,7 @@ News Detail {{post.id}} | HCMUT-EPFL
       <div class="card-body">
          <span class="h6 mb-1">For Admin only</span>
          <p>Edit the fact or content of this post</p>
-         <form action="{{ url_for('posts.post_update', id=post.id) }}">
+         <form action="fakenews/{{post.id}}/update">
             <button class="btn btn-primary">Edit</button>
          </form>
       </div>
@@ -114,7 +114,7 @@ News Detail {{post.id}} | HCMUT-EPFL
          <p>Original source: <a href={{post.url}}>{{post.url}}</a></p>
       </div>
    </div>
-   <form action="{{ url_for('posts.post_detail', id=post.id+1) }}">
+   <form action="fakenews/{{post.id+1}}">
       <button class="btn btn-primary">Next</button>
    </form>
 </div>

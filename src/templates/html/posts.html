@@ -19,7 +19,7 @@ Project Fake News | HCMUT-EPFL
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{{url_for('posts.posts_list')}}">All News</a>
+                    <a class="dropdown-item" href="fakenews">All News</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item {{'font-weight-bold' if filter=='medical'}}" href="?filter=medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Medical</a>
                     <a class="dropdown-item {{'font-weight-bold' if filter=='non_medical'}}" href="?filter=non_medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Not Medical</a>
@@ -37,7 +37,7 @@ Project Fake News | HCMUT-EPFL
     </div>
 
     {% for post in pages.items %}
-    <a href="{{url_for('posts.post_detail', id=post.id)}}" class="post-anchor-wrapper post">
+    <a href="fakenews/{{post.id}}" class="post-anchor-wrapper post">
         <div class="card mb-3" style="max-width: 1000px;">
             <div class="row g-0">
                 <!-- <div class="col-md-4">
@@ -69,7 +69,7 @@ Project Fake News | HCMUT-EPFL
     <div>
         {% for post in pages.items[-2:] %}
 
-        <a href="{{url_for('posts.post_detail', id=post.id)}}" class="post-anchor-wrapper post">
+        <a href="fakenews/{{post.id}}" class="post-anchor-wrapper post">
             <div class="card mb-3" style="width: 18rem;">
                 <!-- <img src="{{post.thumnail}}" class="card-img-top" alt="..."> -->
                 <div class="card-body">

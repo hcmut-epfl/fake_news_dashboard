@@ -20,7 +20,7 @@ Edit Post {{post.id}} | HCMUT-EPFL
         {%endif%}
     {%endif%}
     <div class="col-md-8">
-        <form action="{{ url_for('posts.post_update', id=post.id)}}" method="POST">
+        <form action="fakenews/{{post.id}}/edit" method="POST">
             {% for field in form %}
             <div class="form-group">
                 {{field.label()}}
