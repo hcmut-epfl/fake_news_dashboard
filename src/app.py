@@ -24,7 +24,7 @@ manager = Manager(app)
 admin = Admin(
     app,
     'FlaskApp',
-    url='/',
+    url='/fakenews',
     index_view=HomeAdminView(name='Home')
 )
 admin.add_view(PostAdminView(Post, db.session))

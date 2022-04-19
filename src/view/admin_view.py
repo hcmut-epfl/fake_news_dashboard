@@ -15,7 +15,7 @@ class AdminMixin:
     def inaccessible_callback(self, name, **kwargs):
         if 'request' in kwargs:
             request = kwargs['request']
-            return redirect(url_for('security.login', next=request.url))
+            return redirect(url_for('security.login', next='posts.post_list'))
 
 
 class AdminView(AdminMixin, ModelView):
