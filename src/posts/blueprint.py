@@ -6,12 +6,9 @@ from flask import (
     request,
     redirect,
     url_for,
-    jsonify,
-    send_file,
     Response
 )
 from flask_security import login_required
-from sqlalchemy import true
 from src.ml.medical_classifier import MedicalClassifier
 from src.model.post import Post
 from src.posts.forms import PostForm
