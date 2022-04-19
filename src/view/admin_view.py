@@ -4,7 +4,6 @@ from flask_login import current_user
 
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import AdminIndexView
-from sqlalchemy import null
 
 
 class AdminMixin:
@@ -15,7 +14,7 @@ class AdminMixin:
     def inaccessible_callback(self, name, **kwargs):
         if 'request' in kwargs:
             request = kwargs['request']
-            return redirect(url_for('security.login', next='posts.post_list'))
+            return redirect(url_for('security.login', next=request.url))
 
 
 class AdminView(AdminMixin, ModelView):
