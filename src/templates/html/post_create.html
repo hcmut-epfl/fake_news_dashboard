@@ -14,7 +14,7 @@ Add News | HCMUT-EPFL
     </div>
     {%endif%}
     <div class="col-md-8">
-        <form action="fakenews/create" method="POST">
+        <form action="create" method="POST">
             {% for field in form %}
             <div class="form-group">
                 {{field.label()}}
