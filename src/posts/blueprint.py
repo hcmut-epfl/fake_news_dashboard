@@ -73,7 +73,7 @@ def posts_list():
     q = request.args.get('q')
     filter_title = list()
     
-    groups = db.session.query(Post.group_name).group_by(Post.group_name).all()
+    groups = db.session.query(Post.group_name).group_by(Post.group_name).order_by(Post.group_name).all()
     groups = [g[0] for g in groups]
 
     if q:
