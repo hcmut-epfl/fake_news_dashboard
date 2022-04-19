@@ -20,8 +20,7 @@ from src.app import db
 posts = Blueprint(
     'posts',
     __name__,
-    template_folder='templates',
-    url_prefix='/fakenews'
+    template_folder='templates'
 )
 
 @posts.route('/create', methods=['POST', 'GET'])
