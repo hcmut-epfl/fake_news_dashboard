@@ -19,7 +19,7 @@ Project Fake News | HCMUT-EPFL
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="/">All News</a>
+                    <a class="dropdown-item" href="{{url_for('posts.posts_list')}}">All News</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item {{'font-weight-bold' if filter=='medical'}}" href="?filter=medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Medical</a>
                     <a class="dropdown-item {{'font-weight-bold' if filter=='non_medical'}}" href="?filter=non_medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Not Medical</a>

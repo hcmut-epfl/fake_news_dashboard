@@ -57,13 +57,13 @@ News Detail {{post.id}} | HCMUT-EPFL
          <div class="media position-relative">
             <div class="avatar-md avatar-lg-large mr-3">
                <figure class="figure w-50 mb-0">
-                  <img class="figure-image img-responsive img-fluid w-100 justify-content-center" 
+                  <img alt="Mixture" class="figure-image img-responsive img-fluid w-50" height="50px" 
                        src="{% if post.true_news %}
-                       https://icon-library.com/images/tick-icon-png/tick-icon-png-17.jpg
+                       https://www.pikpng.com/pngl/m/27-278340_download-button-correct-png-clipart.png
                        {% else %}
-                       https://www.shareicon.net/data/256x256/2015/09/15/101562_incorrect_512x512.png
+                       https://esquilo.io/png/thumb/7H0a9WDCxlqzXxs-Wrong-Sign-PNG-File.png
                        {% endif %}"
-                       width="50px">
+                       width="100px">
                   </img>
                </figure>
             </div>
@@ -100,7 +100,7 @@ News Detail {{post.id}} | HCMUT-EPFL
       <div class="card-body">
          <span class="h6 mb-1">For Admin only</span>
          <p>Edit the fact or content of this post</p>
-         <form action="/{{post.id}}/edit">
+         <form action="{{ url_for('posts.post_update', id=post.id) }}">
             <button class="btn btn-primary">Edit</button>
          </form>
       </div>
@@ -114,7 +114,7 @@ News Detail {{post.id}} | HCMUT-EPFL
          <p>Original source: <a href={{post.url}}>{{post.url}}</a></p>
       </div>
    </div>
-   <form action="/{{post.id+1}}">
+   <form action="{{ url_for('posts.post_detail', id=post.id+1) }}">
       <button class="btn btn-primary">Next</button>
    </form>
 </div>
