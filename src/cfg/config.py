@@ -10,5 +10,5 @@ class Config:
     SECRET_KEY='vnepfl'
     SECURITY_PASSWORD_SALT='hoangdzung'
     SECURITY_PASSWORD_HASH='sha512_crypt'
-    SECURITY_POST_LOGIN_VIEW='.'
-    SECURITY_POST_LOGOUT_VIEW='.'
+    SECURITY_POST_LOGIN_VIEW='fakenews'
+    SECURITY_POST_LOGOUT_VIEW='fakenews'
