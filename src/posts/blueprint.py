@@ -150,7 +150,7 @@ def post_update(id):
         form = PostForm(formdata=request.form, obj=post)
         form.populate_obj(post)
         db.session.commit()
-        return redirect(url_for('posts.post_detail', id=post.id))
+        return redirect(f'{id}')
     form = PostForm(obj=post)
     return render_template('html/edit.html', post=post, form=form)
 
