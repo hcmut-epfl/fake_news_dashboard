@@ -169,7 +169,7 @@ def post_detail(id):
     post = Post.query.filter(Post.id==id).first_or_404()
     return render_template('html/post_detail.html', post=post)
 
-@posts.route('/<id>/edit', methods=['POST','GET'])
+@posts.route('/edit_<id>', methods=['POST','GET'])
 @login_required
 def post_update(id):
     post = Post.query.filter(Post.id==id).first_or_404()
