@@ -20,7 +20,7 @@ Edit Post {{post.id}} | HCMUT-EPFL
         {%endif%}
     {%endif%}
     <div class="col-md-8">
-        <form action="edit" method="POST">
+        <form action="{{post.id}}" method="POST">
             {% for field in form %}
             <div class="form-group">
                 {{field.label()}}
