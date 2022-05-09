@@ -177,7 +177,7 @@ def post_update(id):
         form = PostForm(formdata=request.form, obj=post)
         form.populate_obj(post)
         db.session.commit()
-        return redirect(f'{id}')
+        return redirect(f'fakenews/{id}')
     form = PostForm(obj=post)
     return render_template('html/edit.html', post=post, form=form)
 
