@@ -11,8 +11,11 @@ File Upload | HCMUT-EPFL
     <div class="col-md-8">
         <form action="batch_upload" method="POST" enctype="multipart/form-data">
             <label for="gname">Group name:</label>
-            <input type="text" name="group_name"><br>
-            <input type="file" name="file" accept="json"><br><br>  
+            <input type="text" name="group_name"><br><br>
+            <p class="font-weight-bold">Posts (in .json format)</p>
+            <input type="file" name="file" accept="json"><br><br>
+            <p class="font-weight-bold">Labels (in .csv format, optional)</p>
+            <input type="file" name="label" accept="csv"><br><br> 
             <input type="submit" class="btn btn-primary">
         </form>
     </div>

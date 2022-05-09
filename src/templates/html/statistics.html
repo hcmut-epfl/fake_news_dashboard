@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Statistics | HCMUT-EPFL
+{% endblock %}
+
+{% block content %}
+
+<div class="col-12">
+    <h1>Statistics</h1>
+    <br>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+                <div class="card-body">
+                    <h1 class="card-title">{{main_stats['medical_count']}}</h1>
+                    <a class="card-text stretched-link text-white text-decoration-none" href=".?filter=medical" class="btn btn-primary stretched-link">Medical News</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
+                <div class="card-body">
+                    <h1 class="card-title">{{main_stats['non_medical_count']}}</h1>
+                    <a class="card-text stretched-link text-white text-decoration-none" href=".?filter=non_medical" class="btn btn-primary stretched-link">Non-Medical News</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+                <div class="card-body">
+                    <h1 class="card-title">{{main_stats['true_count']}}</h1>
+                    <a class="card-text stretched-link text-white text-decoration-none" href=".?type=true" class="btn btn-primary stretched-link">True News</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+                <div class="card-body">
+                    <h1 class="card-title">{{main_stats['fake_count']}}</h1>
+                    <a class="card-text stretched-link text-white text-decoration-none" href=".?type=fake" class="btn btn-primary stretched-link">Fake News</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light mb-3" style="max-width: 18rem;">
+                <div class="card-body">
+                    <h1 class="card-title">{{main_stats['unverified_count']}}</h1>
+                    <a class="card-text stretched-link text-dark text-decoration-none" href=".?filter=non_medical" class="btn btn-primary stretched-link">Unverified News</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <table class="table">
+        <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Group Name</th>
+              <th scope="col">Medical</th>
+              <th scope="col">Non-medical</th>
+              <th scope="col">True</th>
+              <th scope="col">Fake</th>
+              <th scope="col">Unverified</th>
+            </tr>
+        </thead>
+        {% for g in group_stats%}
+        <tbody>
+            <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td><a href=".?group={{g['name']}}">{{g['name']}}</a></td>
+                <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&filter=medical">{{g['medical_count']}}</a></td>
+                <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&filter=non_medical">{{g['non_medical_count']}}</a></td>
+                <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&type=true">{{g['true_count']}}</a></td>
+                <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&type=fake">{{g['fake_count']}}</a></td>
+                <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&type=unverified">{{g['unverified_count']}}</a></td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

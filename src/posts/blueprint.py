@@ -131,6 +131,33 @@ def posts_list():
         filter_title=filter_title
     )
 
+@posts.route('/stats')
+def get_statistics():
+    groups = db.session.query(Post.group_name).group_by(Post.group_name).order_by(Post.group_name).all()
+    groups = [g[0] for g in groups]
+
+    # Collect main statistics
+    main_stats = dict()
+    main_stats['medical_count'] = Post.query.filter(Post.medical_news == True).count()
+    main_stats['non_medical_count'] = Post.query.filter(Post.medical_news == False).count()
+    main_stats['true_count'] = Post.query.filter(Post.claim_info != '').filter(Post.true_news == True).count()
+    main_stats['fake_count'] = Post.query.filter(Post.claim_info != '').filter(Post.true_news == False).count()
+    main_stats['unverified_count'] = Post.query.filter(Post.claim_info == '').count()
+
+    group_stats = []
+    for group in groups:
+        g = dict()
+        g_posts = Post.query.filter(Post.group_name == group)
+        g['name'] = group
+        g['medical_count'] = g_posts.filter(Post.medical_news == True).count()
+        g['non_medical_count'] = g_posts.filter(Post.medical_news == False).count()
+        g['true_count'] = g_posts.filter(Post.claim_info != '').filter(Post.true_news == True).count()
+        g['fake_count'] = g_posts.filter(Post.claim_info != '').filter(Post.true_news == False).count()
+        g['unverified_count'] = g_posts.filter(Post.claim_info == '').count()
+        group_stats.append(g)
+
+    return render_template('html/statistics.html', main_stats=main_stats, group_stats=group_stats)
+
 @posts.route('/<id>')
 def post_detail(id):
     q = request.args.get('q')
@@ -160,35 +187,48 @@ def post_batch_upload():
     success = False
     message = ''
     if request.method == 'POST':
-        
-        # Encoding the file
-        f = request.files['file']
-        bytes = f.read()
-        uni = bytes.decode('utf-8')
-        d = json.loads(uni)
+        try:
+            # Encoding the file
+            fp = request.files['file']
+            bytes = fp.read()
+            uni = bytes.decode('utf-8')
+            d = json.loads(uni)
 
-        model = MedicalClassifier()
-        group_name = request.form.get('group_name')
-        
-        for post in d:
-            post_dict = dict()
-            post_dict['text'] = post['text']
-            post_dict['url'] = post['post_url']
-            post_dict['time'] = post['time']
-            post_dict['reactions_count'] = post['info']['reaction_count']
-            post_dict['comments_count'] = post['info']['comments']
-            post_dict['shares_count'] = post['info']['shares']
-            post_dict['comments'] = post['comments_full']
-            post_dict['medical_news'] = model.predict([post_dict['text']])[0] == 1
-            post_dict['true_news'] = False
-            post_dict['claim_info'] = ''
-            post_dict['group_name'] = group_name.title()
-            post = Post(**post_dict)
-            db.session.add(post)
+            fl = request.files['label']
+            labels = pd.read_csv(fl)
+            print(labels)
+
+            model = MedicalClassifier()
+            group_name = request.form.get('group_name')
+            
+            for post in d:
+                post_dict = dict()
+                post_dict['text'] = post['text']
+                post_dict['url'] = post['post_url']
+                post_dict['time'] = post['time']
+                post_dict['reactions_count'] = post['info']['reaction_count']
+                post_dict['comments_count'] = post['info']['comments']
+                post_dict['shares_count'] = post['info']['shares']
+                post_dict['comments'] = post['comments_full']
+
+                temp_label = labels[labels['post_id'] == post['post_id']]
+                if len(temp_label) > 0:
+                    post_dict['medical_news'] = temp_label.iloc[0]
+                else:
+                    post_dict['medical_news'] = model.predict([post_dict['text']])[0] == 1
+                post_dict['true_news'] = False
+                post_dict['claim_info'] = ''
+                post_dict['group_name'] = group_name.title()
+                post = Post(**post_dict)
+                db.session.add(post)
+        except Exception as e:
+            print(e)
+            message = 'Fail during import.'
         try:
             db.session.commit()
-        except:
-            print("Cannot add new post to the database.")
+        except Exception as e:
+            print(e)
+            message = "Cannot add new post to the database."
         success = True
         message = 'Successfully uploaded!'
             
