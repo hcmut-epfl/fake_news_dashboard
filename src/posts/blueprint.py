@@ -179,7 +179,8 @@ def post_update(id):
         db.session.commit()
         return redirect(f'{id}')
     form = PostForm(obj=post)
-    return render_template('html/edit.html', post=post, form=form)
+    url = url_for('{}'.format(id), **request.args)
+    return redirect(url)
 
 @posts.route('/batch_upload', methods=['POST', 'GET'])
 @login_required
