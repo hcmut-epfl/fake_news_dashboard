@@ -194,9 +194,12 @@ def post_batch_upload():
             uni = bytes.decode('utf-8')
             d = json.loads(uni)
 
-            fl = request.files['label']
-            labels = pd.read_csv(fl)
-            print(labels)
+            labels = None
+            try:
+                fl = request.files['label']
+                labels = pd.read_csv(fl)
+            except:
+                pass
 
             model = MedicalClassifier()
             group_name = request.form.get('group_name')
@@ -205,32 +208,36 @@ def post_batch_upload():
                 post_dict = dict()
                 post_dict['text'] = post['text']
                 post_dict['url'] = post['post_url']
-                post_dict['time'] = post['time']
+                post_dict['time'] = post['info']['time']
                 post_dict['reactions_count'] = post['info']['reaction_count']
                 post_dict['comments_count'] = post['info']['comments']
                 post_dict['shares_count'] = post['info']['shares']
                 post_dict['comments'] = post['comments_full']
 
-                temp_label = labels[labels['post_id'] == post['post_id']]
+                if labels is not None and 'post_id' in post and 'post_id' in labels.columns:
+                    temp_label = labels[labels['post_id'] == post['post_id']]
+                else:
+                    temp_label = []
                 if len(temp_label) > 0:
                     post_dict['medical_news'] = temp_label.iloc[0]
                 else:
                     post_dict['medical_news'] = model.predict([post_dict['text']])[0] == 1
+
                 post_dict['true_news'] = False
                 post_dict['claim_info'] = ''
                 post_dict['group_name'] = group_name.title()
                 post = Post(**post_dict)
                 db.session.add(post)
         except Exception as e:
-            print(e)
             message = 'Fail during import.'
+            raise(e)
         try:
             db.session.commit()
+            success = True
+            message = 'Successfully uploaded!'
         except Exception as e:
-            print(e)
             message = "Cannot add new post to the database."
-        success = True
-        message = 'Successfully uploaded!'
+            raise(e)
             
     return render_template('html/post_batch_upload.html', success=success, message=message)
 
