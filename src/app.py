@@ -1,5 +1,7 @@
 from flask import Flask
 
+from flask_mongoalchemy import MongoAlchemy
+
 from flask_admin import Admin
 
 from flask_migrate import Migrate
@@ -16,7 +18,8 @@ from src.view.admin_view import HomeAdminView, PostAdminView
 app = Flask(__name__)
 app.config.from_object(Config)
 
-db = SQLAlchemy(app)
+db = MongoAlchemy(app)
+db_admin = SQLAlchemy(app)
 from src.model import *
 migrate = Migrate(app, db)
 manager = Manager(app)
