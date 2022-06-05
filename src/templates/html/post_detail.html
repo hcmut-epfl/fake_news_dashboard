@@ -227,7 +227,7 @@ News Detail {{post.id}} | HCMUT-EPFL
             <div class="media position-relative">
                <div class="avatar-md avatar-lg-large mr-3">
                   <figure class="figure w-50 mb-0">
-                     <img alt="Mixture" class="figure-image img-responsive img-fluid w-50" height="50px" src="{% if post.true_news %}
+                     <img alt="Mixture" class="figure-image img-responsive img-fluid w-50" height="50px" src="{% if post["is_fakenew"] == true %}
                        https://www.pikpng.com/pngl/m/27-278340_download-button-correct-png-clipart.png
                        {% else %}
                        https://esquilo.io/png/thumb/7H0a9WDCxlqzXxs-Wrong-Sign-PNG-File.png
