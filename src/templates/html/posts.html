@@ -34,11 +34,12 @@ Project Fake News | HCMUT-EPFL
                 </div>
             </div>
         </div>
+        <div class="container p-2"></div>
     </div>
 
-    {% for post in pages.items %}
-    <a href="{{post.id}}" class="post-anchor-wrapper post">
-        <div class="card mb-3" style="max-width: 1000px;">
+    {% for post in posts[:10] %}
+    <a href="{{post['_id']}}" class="post-anchor-wrapper post">
+        <div class="card mb-3 shadow-sm" style="max-width: 1000px;">
             <div class="row g-0">
                 <!-- <div class="col-md-4">
                         <img src="{{post.thumnail}}" class="img-fluid rounded-start h-100" 
@@ -47,14 +48,22 @@ Project Fake News | HCMUT-EPFL
                 <div class="col-md-8">
                     <div class="card-body">
                         <!-- <h5 class="card-title">{{post.title}}</h5> -->
-                        <p class="card-text">{{post.shortened_text}}</p>
-                        {% if post.claim_info|length > 0 %}
-                        <span class="tag">{{'True' if post.true_news else 'Fake'}}</span>
+                        <p class="card-text">{{' '.join(post['text'].split()[:30])}}</p>
+                        {% if 'is_fakenew' in post %}
+                            {% if post['is_fakenew'] == false %}
+                            <span class="tag" style="background-color:green;color:white;">True</span>
+                            {% else %}
+                            <span class="tag" style="background-color:red;color:white;">Fake</span>
+                            {% endif %}
                         {%endif%}
-                        {% if post.group_name|length > 0 %}
-                        <span class="tag">{{post.group_name}}</span>
+                        {% if 'is_medical' in post %}
+                            {% if post['is_medical'] == false %}
+                            <span class="tag">Not Medical</span>
+                            {% else %}
+                            <span class="tag" style="background-color:blue;color:white;">Medical</span>
+                            {% endif %}
                         {%endif%}
-                        <span class="tag">{{'Medical' if post.medical_news else 'Not Medical'}}</span>
+                        <span class="tag" style="background-color:paleturquoise;">{{post['page_id']}}</span>
                     </div>
                 </div>
             </div>
@@ -67,14 +76,14 @@ Project Fake News | HCMUT-EPFL
     <h3>Up next for you</h3>
 
     <div>
-        {% for post in pages.items[-2:] %}
+        {% for post in posts[-2:] %}
 
         <a href="{{post.id}}" class="post-anchor-wrapper post">
             <div class="card mb-3" style="width: 18rem;">
                 <!-- <img src="{{post.thumnail}}" class="card-img-top" alt="..."> -->
                 <div class="card-body">
                     <!-- <h5 class="card-title">{{post.title}}</h5> -->
-                    <p class="card-text">{{post.shortened_text}}</p>
+                    <p class="card-text">{{post['text'][:100]}}</p>
                 </div>
             </div>
         </a>
@@ -86,10 +95,10 @@ Project Fake News | HCMUT-EPFL
 <nav aria-label="...">
     <ul class="pagination">
         <li class="page-item {% if not pages.has_prev %} disabled {% endif %}">
-            <a class="page-link" href="?page={{ pages.prev_num }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Previous</a>
+            <a class="page-link" href="?page={{ cur_page-1 }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Previous</a>
         </li>
 
-        {% for page in pages.iter_pages() %}
+        {% for page in pages.iter_pages %}
         {% if page %}
         <li class="page-item {% if page == pages.page %} active {% endif %}">
             <a class="page-link" href="?page={{ page }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">{{ page }} <span class="sr-only">(current)</span></a>
@@ -102,7 +111,7 @@ Project Fake News | HCMUT-EPFL
         {% endfor %}
 
         <li class="page-item {% if not pages.has_next %} disabled {% endif %}">
-            <a class="page-link" href="?page={{ pages.next_num }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Next</a>
+            <a class="page-link" href="?page={{ cur_page+1 }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Next</a>
         </li>
     </ul>
 </nav>

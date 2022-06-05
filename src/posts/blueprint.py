@@ -1,4 +1,6 @@
+from argparse import Namespace
 import json
+from bson import ObjectId
 import pandas as pd
 from flask import (
     Blueprint,
@@ -10,14 +12,13 @@ from flask import (
 )
 from flask_security import login_required
 from src.ml.medical_classifier import MedicalClassifier
-from src.model.post import Post
 from src.posts.forms import PostForm
 from src.app import db
 
 posts = Blueprint(
     'posts',
     __name__,
-    template_folder='templates'
+    template_folder='templates',
 )
 
 @posts.route('/create', methods=['POST', 'GET'])
@@ -39,7 +40,7 @@ def post_create():
         true_news = (true_news == 'y') if isinstance(true_news, str) else true_news
         claim_info = request.form.get('claim_info')
         medical_news = medical_classifier.predict([text])[0] == 1
-        group_name = request.form.get('group_name')
+        page_id = request.form.get('page_id')
         try:
             post = Post(
                 text=text,
@@ -52,7 +53,7 @@ def post_create():
                 true_news=true_news,
                 claim_info=claim_info,
                 medical_news=medical_news,
-                group_name=group_name
+                page_id=page_id
             )
             db.session.add(post)
             db.session.commit()
@@ -73,40 +74,39 @@ def posts_list():
     q = request.args.get('q')
     filter_title = list()
     
-    groups = db.session.query(Post.group_name).group_by(Post.group_name).order_by(Post.group_name).all()
-    groups = [g[0] for g in groups]
+    groups = db.fbpost.distinct('page_id')
+    all_filters = {}
 
     if q:
-        posts = Post.query.filter(Post.text.contains(q))
-    else:
-        posts = Post.query.order_by(Post.time.desc())
-
-    posts = Post.query
+        all_filters["text"] = {"$regex": f"/.*{q}.*/"}
 
     filter = request.args.get('filter')
     if filter == "medical":
-        posts = posts.filter(Post.medical_news == True)
         filter_title.append("Medical")
+        all_filters["is_medical"] = True
     elif filter == "non_medical":
-        posts = posts.filter(Post.medical_news == False)
         filter_title.append("Not Medical")
+        all_filters["is_medical"] = False
     else:
         filter = ''
     
     type = request.args.get('type')
     if type == "fake":
-        posts = posts.filter(Post.claim_info != '').filter(Post.true_news == False)
         filter_title.append("Fake")
+        all_filters["is_fakenew"] = True
     elif type == "true":
-        posts = posts.filter(Post.claim_info != '').filter(Post.true_news == True)
         filter_title.append("True")
+        all_filters["is_fakenew"] = False
+    elif type == "unverified":
+        all_filters["is_fakenew"] = {"$exists": False}
+        type = 'unverified'
     else:
         type = ''
 
     group = request.args.get('group')
     if group:
-        posts = posts.filter(Post.group_name == group)
         filter_title.append(group)
+        all_filters["page_id"] = group
     else:
         group = ''
 
@@ -117,13 +117,28 @@ def posts_list():
         page = int(page)
     else:
         page = 1 
-    
-    pages = posts.paginate(page=page, per_page=10)
+
+    p_count = int(db.fbpost.count_documents(all_filters) / 10)
+    if page <= 4 or page >= p_count - 3:
+        iter_pages = [1, 2, 3, 4, 5, None, p_count - 4, p_count - 3, p_count - 2, p_count - 1, p_count]
+    else:
+        iter_pages = [1, None, page - 2, page - 1, page, page + 1, page + 2, None, p_count - 1, p_count]
+    pages = Namespace(
+        has_prev=(page > 1),
+        has_next=(page != p_count),
+        iter_pages=iter_pages,
+    )
+    posts = list(db.fbpost.aggregate([
+            { "$match": all_filters },
+            { "$skip": 10 * page },  # No. of documents to skip (Should be `0` for Page - 1)
+            { "$limit": 12 }  # No. of documents to be displayed on your webpage
+        ]))
 
     return render_template(
         'html/posts.html',
         posts=posts,
         pages=pages,
+        cur_page=page,
         filter=filter,
         groups=groups,
         group=group,
@@ -133,28 +148,27 @@ def posts_list():
 
 @posts.route('/stats')
 def get_statistics():
-    groups = db.session.query(Post.group_name).group_by(Post.group_name).order_by(Post.group_name).all()
-    groups = [g[0] for g in groups]
 
-    # Collect main statistics
-    main_stats = dict()
-    main_stats['medical_count'] = Post.query.filter(Post.medical_news == True).count()
-    main_stats['non_medical_count'] = Post.query.filter(Post.medical_news == False).count()
-    main_stats['true_count'] = Post.query.filter(Post.claim_info != '').filter(Post.true_news == True).count()
-    main_stats['fake_count'] = Post.query.filter(Post.claim_info != '').filter(Post.true_news == False).count()
-    main_stats['unverified_count'] = Post.query.filter(Post.claim_info == '').count()
-
-    group_stats = []
+    groups = db.fbpost.distinct('page_id')
+    
+    main_stats = {
+        'medical_count': db.fbpost.count_documents({'is_medical': True}),
+        'non_medical_count': db.fbpost.count_documents({'is_medical': False}),
+        'true_count': db.fbpost.count_documents({'is_fakenew': False}),
+        'fake_count': db.fbpost.count_documents({'is_fakenew': True}),
+        'unverified_count': db.fbpost.count_documents({'is_fakenew': {"$exists": False}})
+    }
+    group_stats = list()
+    
     for group in groups:
-        g = dict()
-        g_posts = Post.query.filter(Post.group_name == group)
-        g['name'] = group
-        g['medical_count'] = g_posts.filter(Post.medical_news == True).count()
-        g['non_medical_count'] = g_posts.filter(Post.medical_news == False).count()
-        g['true_count'] = g_posts.filter(Post.claim_info != '').filter(Post.true_news == True).count()
-        g['fake_count'] = g_posts.filter(Post.claim_info != '').filter(Post.true_news == False).count()
-        g['unverified_count'] = g_posts.filter(Post.claim_info == '').count()
-        group_stats.append(g)
+        group_stats.append({
+            'name': group,
+            'medical_count': db.fbpost.count_documents({'page_id': group, 'is_medical': True}),
+            'non_medical_count': db.fbpost.count_documents({'page_id': group, 'is_medical': False}),
+            'true_count': db.fbpost.count_documents({'page_id': group, 'is_fakenew': False}),
+            'fake_count': db.fbpost.count_documents({'page_id': group, 'is_fakenew': True}),
+            'unverified_count': db.fbpost.count_documents({'page_id': group, 'is_fakenew': {"$exists": False}})
+        })
 
     return render_template('html/statistics.html', main_stats=main_stats, group_stats=group_stats)
 
@@ -166,8 +180,12 @@ def post_detail(id):
         full_url = url_for('posts.posts_list', **request.args)
         return redirect(full_url)
 
-    post = Post.query.filter(Post.id==id).first_or_404()
-    return render_template('html/post_detail.html', post=post)
+    oid = ObjectId(id)
+    post = db.fbpost.find_one({"_id": oid})
+    next_id = f'{(int(id, 16) + 1):x}'
+    comments = list(db.fbcmt.find({"post_id": post["post_id"]}))
+
+    return render_template('html/post_detail.html', post=post, comments=comments, next_id=next_id)
 
 @posts.route('/edit_<id>', methods=['POST','GET'])
 @login_required
@@ -202,7 +220,7 @@ def post_batch_upload():
                 pass
 
             model = MedicalClassifier()
-            group_name = request.form.get('group_name')
+            page_id = request.form.get('page_id')
             
             for post in d:
                 post_dict = dict()
@@ -225,7 +243,7 @@ def post_batch_upload():
 
                 post_dict['true_news'] = False
                 post_dict['claim_info'] = ''
-                post_dict['group_name'] = group_name.title()
+                post_dict['page_id'] = page_id.title()
                 post = Post(**post_dict)
                 db.session.add(post)
         except Exception as e:

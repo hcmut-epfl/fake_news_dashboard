@@ -5,26 +5,26 @@ News Detail {{post.id}} | HCMUT-EPFL
 {% endblock %}
 
 {% block content %}
-<div class="col-8 mx-auto">
+
+<style>
+   .scroll {
+      max-height: 650px;
+      overflow-y: auto;
+   }
+</style>
+
+<!-- <div class="col-8 mx-auto">
    <div class="wp-block-snopes-fact-check-claim card mb-3 header">
       <div class="claim-text card-body pb-0">
-         <!-- {{Title}} -->
          <h3 class="title">
             {{post.group_name}}
          </h3>
-         <!-- {{Subtitle}} -->
          <p class="subtitle">
             {{post.text}}
          </p>
-         <!-- {{Author}} -->
-         <!-- <b class="d-block">By Facebook</b> -->
          <span class="published-date">Created at {{post.time}}</span>
          <br>
          <br>
-
-         <!-- <div class="image-wrapper">
-            <img class="w-100" src="{{post.thumnail}}"/>
-         </div> -->
       </div>
    </div>
    <div class="wp-block-snopes-fact-check-claim card mb-3">
@@ -84,12 +84,6 @@ News Detail {{post.id}} | HCMUT-EPFL
          <p>{{post.claim_info}}</p>
       </div>
       {% endif %}
-      <!-- {% if post.ctx_info|length>0%}
-      <div class="claim-text card-body">
-         <span class="h6 mb-1">Context</span>
-         <p>{{post.ctx_info}}</p>
-      </div>
-      {% endif %} -->
       {%else%}
       <div class="claim-text card-body">
          <span class="h6 mb-1">Unverified</span>
@@ -114,9 +108,192 @@ News Detail {{post.id}} | HCMUT-EPFL
          <p>Original source: <a href={{post.url}}>{{post.url}}</a></p>
       </div>
    </div>
-   <form action="{{post.id+1}}">
-      <button class="btn btn-primary">Next</button>
-   </form>
+</div> -->
+<div class="row">
+   <div class="col-md-7">
+      <div class="shadow card p-3 scroll">
+         <div class="d-flex justify-content-between p-2 px-3">
+            <div class="d-flex flex-row align-items-center"> <img
+                  src="https://blogtimenow.com/wp-content/uploads/2014/06/hide-facebook-profile-picture-notification.jpg"
+                  width="50" class="rounded-circle">
+               <div class="d-flex flex-column ml-2"> <span class="font-weight-bold">{{post["username"]}}</span>
+                  <small class="text-primary">Posted on {{post["page_id"]}}</small>
+               </div>
+            </div>
+            <div class="d-flex flex-row mt-1 ellipsis"> <small class="mr-2">{{post["info"]["time"].strftime('%Y-%m-%d
+                  %H:%M:%S')}}</small> <i class="fa fa-ellipsis-h"></i> </div>
+         </div>
+         <div class="p-2">
+            <p>{{post["text"]}}</p>
+         </div>
+         {% for img_url in post["images"] %}
+         <img src="{{img_url}}" alt="Image deleted by author" class="img-fluid">
+         {% endfor %}
+         <div class="p-2">
+            <hr>
+            <div class="col d-flex justify-content-between">
+               <div class="row row-cols-1 text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/like-2387659-1991059.png" width="25">
+                  <p>{{post["info"]["reactions"].get("Thích", 0)}}</p>
+               </div>
+               <div class="row row-cols-1 text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/love-2387666-1991064.png" width="25">
+                  <p>{{post["info"]["reactions"].get("Yêu thích", 0)}}</p>
+               </div>
+               <div class="row row-cols-1 text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/sad-2387665-1991063.png" width="25">
+                  <p>{{post["info"]["reactions"].get("Buồn", 0)}}</p>
+               </div>
+               <div class="row row-cols-1 text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/wow-2387663-1991062.png" width="25">
+                  <p>{{post["info"]["reactions"].get("Wow", 0)}}</p>
+               </div>
+               <div class="row row-cols-1 text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/angry-2387661-1991061.png" width="25">
+                  <p>{{post["info"]["reactions"].get("Phẫn nộ", 0)}}</p>
+               </div>
+               <div class="row row-cols-1 text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/care-2387662-1991058.png" width="25">
+                  <p>{{post["info"]["reactions"].get("Thương thương", 0)}}</p>
+               </div>
+               <div class="row row-cols-1 text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/haha-2387660-1991060.png" width="25">
+                  <p>{{post["info"]["reactions"].get("Haha", 0)}}</p>
+               </div>
+               <div class="row row-cols-1 text-center">
+                  <img src="https://static.thenounproject.com/png/1314304-200.png" width="25">
+                  <p>{{post["info"].get("comments", 0)}}</p>
+               </div>
+               <div class="row row-cols-1 text-center">
+                  <img src="https://cdn0.iconfinder.com/data/icons/facebook-ui-glyph/48/Sed-42-512.png" width="25">
+                  <p>{{post["info"].get("shares", 0)}}</p>
+               </div>
+            </div>
+            <hr>
+         </div>
+      </div>
+   </div>
+   <div class="col-md-5">
+      <div class="shadow card p-3 scroll">
+         <div class="card-header">
+            <h3 class="h6">Comment</h3>
+         </div>
+         <br>
+         <div class="comments">
+            {% if comments|length > 0 %}
+            {% for comment in comments %}
+            <div class="d-flex flex-row mb-2"> <img
+                  src="https://blogtimenow.com/wp-content/uploads/2014/06/hide-facebook-profile-picture-notification.jpg"
+                  width="40" class="rounded-image">
+               <div class="d-flex flex-column ml-2"> <span class="name">{{comment["username"]}}</span> <small
+                     class="comment-text">{{comment["text"]}}</small>
+                  <div class="d-flex flex-row align-items-center status">
+                     <small style="background-color:blue; color:white;">&nbsp;Like:
+                        {{post["info"]["reactions"].get("Thích", 0)}}&nbsp;</small>&nbsp;
+                     <small style="background-color:red; color:white;">&nbsp;Love: {{post["info"]["reactions"].get("Yêu
+                        thích", 0)}}&nbsp;</small>&nbsp;
+                     <small style="background-color:purple; color:white;">&nbsp;Sad:
+                        {{post["info"]["reactions"].get("Buồn", 0)}}&nbsp;</small>&nbsp;
+                     <small style="background-color:yellow; color:black;">&nbsp;Wow:
+                        {{post["info"]["reactions"].get("Wow", 0)}}&nbsp;</small>&nbsp;
+                     <small style="background-color:mediumvioletred; color:white;">Angry:
+                        {{post["info"]["reactions"].get("Phẫn nộ", 0)}}</small>&nbsp;
+                     <small style="background-color:greenyellow; color:black;">&nbsp;Haha:
+                        {{post["info"]["reactions"].get("Haha", 0)}} &nbsp;</small>&nbsp;
+                     <small style="background-color:palevioletred; color:white;">&nbsp;Care:
+                        {{post["info"]["reactions"].get("Thương thương", 0)}} &nbsp;</small>&nbsp;
+                  </div>
+               </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <hr>
+            <p>&nbsp;No comment found on this post.</p>
+            <hr>
+            {% endif %}
+         </div>
+      </div>
+   </div>
 </div>
-
+<div class="container mb-3"></div>
+<div class="row">
+   <div class="col-md-7">
+      <div class="wp-block-snopes-fact-check-rating card mb-3 shadow p-3" data-component="claim-rating">
+         <div class="card-header">
+            <h3 class="h6">News Check</h3>
+         </div>
+         {% if "is_fakenew" in post %}
+         <div class="card-body">
+            <div class="media position-relative">
+               <div class="avatar-md avatar-lg-large mr-3">
+                  <figure class="figure w-50 mb-0">
+                     <img alt="Mixture" class="figure-image img-responsive img-fluid w-50" height="50px" src="{% if post.true_news %}
+                       https://www.pikpng.com/pngl/m/27-278340_download-button-correct-png-clipart.png
+                       {% else %}
+                       https://esquilo.io/png/thumb/7H0a9WDCxlqzXxs-Wrong-Sign-PNG-File.png
+                       {% endif %}" width="100px">
+                     </img>
+                  </figure>
+               </div>
+               <div class="media-body d-flex flex-column align-self-center">
+                  <span class="h3 rating-label-mixture">{{post.rating_text}}</span>
+               </div>
+            </div>
+         </div>
+         {% if post["is_fakenew"] == true %}
+         <div class="claim-text card-body">
+            <span class="h6 mb-1">True</span>
+            <p>This is stated as a True News</p>
+         </div>
+         {% endif %}
+         {% if post["is_fakenew"] == false %}
+         <div class="claim-text card-body">
+            <span class="h6 mb-1">False</span>
+            <p>This is stated as a Fake News</p>
+         </div>
+         {% endif %}
+         {%else%}
+         <div class="claim-text card-body">
+            <span class="h6 mb-1">Unverified</span>
+            <p>This post is currently unverified or the claim statement is still empty.</p>
+         </div>
+         {%endif%}
+         {%if current_user.is_authenticated %}
+         <div class="card-body">
+            <span class="h6 mb-1">For Admin only</span>
+            <p>Edit the fact or content of this post</p>
+            <form action="edit_{{post.id}}">
+               <button class="btn btn-primary">Edit</button>
+            </form>
+         </div>
+         {%endif%}
+      </div>
+   </div>
+   <div class="col-md-5">
+      <div class="wp-block-snopes-fact-check-claim card mb-3 shadow p-3">
+         <div class="card-header">
+            <h3 class="h6">Verification</h3>
+         </div>
+         <div class="single-body card-body rich-text">
+            <p>This News is verified by</p>
+            <ul>
+               <li class="{{'font-weight-bold' if post.get("is_verify_fakenew") == true or post.get("is_verify") == true}}" style="color:{{'green' if post.get("is_verify_fakenew") == true or post.get("is_verify") == true else 'gray'}};">Human Verification</li>
+               <li class="{{'font-weight-bold' if post.get("is_auto") == true}}" style="color:{{'green' if post.get("is_auto") == true else 'gray'}};">ML Classification</li>
+               <li class="{{'font-weight-bold' if post.get("is_fakenew") is none}}" style="color:{{'green' if post.get("is_fakenew") is none else 'gray'}};">Unverified</li>
+             </ul>
+         </div>
+      </div>
+      <div class="wp-block-snopes-fact-check-claim card mb-3 shadow p-3">
+         <div class="card-header">
+            <h3 class="h6">Origin</h3>
+         </div>
+         <div class="single-body card-body rich-text">
+            <p>Original source: <a href={{post["post_url"]}}>{{post["post_url"]}}</a></p>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- <form action="{{next_id}}">
+   <button class="btn btn-primary">Next</button>
+</form> -->
 {% endblock %}

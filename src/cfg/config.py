@@ -8,7 +8,8 @@ class Config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'news_db', 'database.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MONGOALCHEMY_CONNECTION_STRING = 'mongodb+srv://edwardly1002:Ltb123%21%40%23@cluster0.lqbbu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
-    MONGOALCHEMY_DATABASE = 'myFirstDatabase'
+    MONGOALCHEMY_DATABASE = 'fakenews'
+    MONGO_URI = 'mongodb+srv://edwardly1002:Ltb123%21%40%23@cluster0.lqbbu.mongodb.net/fakenews?retryWrites=true&w=majority'
     SECRET_KEY='vnepfl'
     SECURITY_PASSWORD_SALT='hoangdzung'
     SECURITY_PASSWORD_HASH='sha512_crypt'
