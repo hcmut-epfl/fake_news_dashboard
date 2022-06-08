@@ -179,11 +179,19 @@ def post_detail(id):
     if q:
         full_url = url_for('posts.posts_list', **request.args)
         return redirect(full_url)
-
+    if id == 'favicon.ico':
+        return render_template('index.html')
     oid = ObjectId(id)
+    official_flag = True
     post = db.fbpost.find_one({"_id": oid})
+    if post is None:
+        post = db.testpost.find_one({"_id": oid})
+        official_flag = False
     next_id = f'{(int(id, 16) + 1):x}'
-    comments = list(db.fbcmt.find({"post_id": post["post_id"]}))
+    if official_flag:
+        comments = list(db.fbcmt.find({"post_id": post["post_id"]}))
+    else:
+        comments = list(db.testcmt.find({"post_id": post["post_id"]}))
 
     return render_template('html/post_detail.html', post=post, comments=comments, next_id=next_id)
 
@@ -291,3 +299,86 @@ def export_json():
                         "attachment",
                         filename='news.json')
     return response
+
+@posts.route('/test')
+def posts_list_test():
+    q = request.args.get('q')
+    filter_title = list()
+    
+    groups = db.testpost.distinct('page_id')
+    all_filters = {}
+
+    if q:
+        all_filters["text"] = {
+            "$ne": "",
+            "$regex": f"/.*{q}.*/"
+        }
+    else:
+        # Remove empty text
+        all_filters["text"] = {"$ne": ""}
+
+    filter = request.args.get('filter')
+    if filter == "medical":
+        filter_title.append("Medical")
+        all_filters["is_medical"] = True
+    elif filter == "non_medical":
+        filter_title.append("Not Medical")
+        all_filters["is_medical"] = False
+    else:
+        filter = ''
+    
+    type = request.args.get('type')
+    if type == "fake":
+        filter_title.append("Fake")
+        all_filters["is_fakenew"] = True
+    elif type == "true":
+        filter_title.append("True")
+        all_filters["is_fakenew"] = False
+    elif type == "unverified":
+        all_filters["is_fakenew"] = {"$exists": False}
+        type = 'unverified'
+    else:
+        type = ''
+
+    group = request.args.get('group')
+    if group:
+        filter_title.append(group)
+        all_filters["page_id"] = group
+    else:
+        group = ''
+
+    filter_title = ', '.join(filter_title) if len(filter_title) > 0 else "All"
+
+    page = request.args.get('page')
+    if page and page.isdigit():
+        page = int(page)
+    else:
+        page = 1 
+
+    p_count = int(db.testpost.count_documents(all_filters) / 10)
+    if page <= 4 or page >= p_count - 3:
+        iter_pages = [1, 2, 3, 4, 5, None, p_count - 4, p_count - 3, p_count - 2, p_count - 1, p_count]
+    else:
+        iter_pages = [1, None, page - 2, page - 1, page, page + 1, page + 2, None, p_count - 1, p_count]
+    pages = Namespace(
+        has_prev=(page > 1),
+        has_next=(page != p_count),
+        iter_pages=iter_pages,
+    )
+    posts = list(db.testpost.aggregate([
+            { "$match": all_filters },
+            { "$skip": 10 * page },  # No. of documents to skip (Should be `0` for Page - 1)
+            { "$limit": 12 }  # No. of documents to be displayed on your webpage
+        ]))
+
+    return render_template(
+        'html/posts.html',
+        posts=posts,
+        pages=pages,
+        cur_page=page,
+        filter=filter,
+        groups=groups,
+        group=group,
+        type=type,
+        filter_title=filter_title
+    )
