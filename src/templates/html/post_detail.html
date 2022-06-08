@@ -109,19 +109,21 @@ News Detail {{post.id}} | HCMUT-EPFL
       </div>
    </div>
 </div> -->
-<div class="row">
+
    <div class="col-md-7">
       <div class="shadow card p-3 scroll">
-         <div class="d-flex justify-content-between p-2 px-3">
-            <div class="d-flex flex-row align-items-center"> <img
+         <div class="justify-content-between p-2 px-3">
+            <div class="row align-items-center"> <img
                   src="https://blogtimenow.com/wp-content/uploads/2014/06/hide-facebook-profile-picture-notification.jpg"
                   width="50" class="rounded-circle">
-               <div class="d-flex flex-column ml-2"> <span class="font-weight-bold">{{post["username"]}}</span>
-                  <small class="text-primary">Posted on {{post["page_id"]}}</small>
+               <div class="col">
+                  <div class="row ml-1"><span class="font-weight-bold">{{post["username"]}}</span></div>
+                  <div class="row ml-1"><span> <small>{{post["info"]["time"].strftime('%Y-%m-%d
+                           %H:%M:%S')}}</small></span> </div>
+                  <div class="row ml-1"> <span><small class="text-primary">Posted on {{post["page_id"]}}</small></span>
+                  </div>
                </div>
             </div>
-            <div class="d-flex flex-row mt-1 ellipsis"> <small class="mr-2">{{post["info"]["time"].strftime('%Y-%m-%d
-                  %H:%M:%S')}}</small> <i class="fa fa-ellipsis-h"></i> </div>
          </div>
          <div class="p-2">
             <p>{{post["text"]}}</p>
@@ -131,41 +133,41 @@ News Detail {{post.id}} | HCMUT-EPFL
          {% endfor %}
          <div class="p-2">
             <hr>
-            <div class="col d-flex justify-content-between">
-               <div class="row row-cols-1 text-center">
-                  <img src="https://cdn.iconscout.com/icon/free/png-128/like-2387659-1991059.png" width="25">
+            <div class="row justify-content-between">
+               <div class="col text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/like-2387659-1991059.png" width="35">
                   <p>{{post["info"]["reactions"].get("Thích", 0)}}</p>
                </div>
-               <div class="row row-cols-1 text-center">
-                  <img src="https://cdn.iconscout.com/icon/free/png-128/love-2387666-1991064.png" width="25">
+               <div class="col text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/love-2387666-1991064.png" width="35">
                   <p>{{post["info"]["reactions"].get("Yêu thích", 0)}}</p>
                </div>
-               <div class="row row-cols-1 text-center">
-                  <img src="https://cdn.iconscout.com/icon/free/png-128/sad-2387665-1991063.png" width="25">
+               <div class="col text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/sad-2387665-1991063.png" width="35">
                   <p>{{post["info"]["reactions"].get("Buồn", 0)}}</p>
                </div>
-               <div class="row row-cols-1 text-center">
-                  <img src="https://cdn.iconscout.com/icon/free/png-128/wow-2387663-1991062.png" width="25">
+               <div class="col text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/wow-2387663-1991062.png" width="35">
                   <p>{{post["info"]["reactions"].get("Wow", 0)}}</p>
                </div>
-               <div class="row row-cols-1 text-center">
-                  <img src="https://cdn.iconscout.com/icon/free/png-128/angry-2387661-1991061.png" width="25">
+               <div class="col text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/angry-2387661-1991061.png" width="35">
                   <p>{{post["info"]["reactions"].get("Phẫn nộ", 0)}}</p>
                </div>
-               <div class="row row-cols-1 text-center">
-                  <img src="https://cdn.iconscout.com/icon/free/png-128/care-2387662-1991058.png" width="25">
+               <div class="col text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/care-2387662-1991058.png" width="35">
                   <p>{{post["info"]["reactions"].get("Thương thương", 0)}}</p>
                </div>
-               <div class="row row-cols-1 text-center">
-                  <img src="https://cdn.iconscout.com/icon/free/png-128/haha-2387660-1991060.png" width="25">
+               <div class="col text-center">
+                  <img src="https://cdn.iconscout.com/icon/free/png-128/haha-2387660-1991060.png" width="35">
                   <p>{{post["info"]["reactions"].get("Haha", 0)}}</p>
                </div>
-               <div class="row row-cols-1 text-center">
-                  <img src="https://static.thenounproject.com/png/1314304-200.png" width="25">
+               <div class="col text-center">
+                  <img src="https://static.thenounproject.com/png/1314304-200.png" width="35">
                   <p>{{post["info"].get("comments", 0)}}</p>
                </div>
-               <div class="row row-cols-1 text-center">
-                  <img src="https://cdn0.iconfinder.com/data/icons/facebook-ui-glyph/48/Sed-42-512.png" width="25">
+               <div class="col text-center">
+                  <img src="https://cdn0.iconfinder.com/data/icons/facebook-ui-glyph/48/Sed-42-512.png" width="35">
                   <p>{{post["info"].get("shares", 0)}}</p>
                </div>
             </div>
@@ -176,32 +178,29 @@ News Detail {{post.id}} | HCMUT-EPFL
    <div class="col-md-5">
       <div class="shadow card p-3 scroll">
          <div class="card-header">
-            <h3 class="h6">Comment</h3>
+            <h3 class="h6">Comments</h3>
          </div>
          <br>
          <div class="comments">
             {% if comments|length > 0 %}
             {% for comment in comments %}
-            <div class="d-flex flex-row mb-2"> <img
+            <div class="d-flex flex-row mb-2"> 
+               <div class="col-sm-2">
+               <img
                   src="https://blogtimenow.com/wp-content/uploads/2014/06/hide-facebook-profile-picture-notification.jpg"
-                  width="40" class="rounded-image">
-               <div class="d-flex flex-column ml-2"> <span class="name">{{comment["username"]}}</span> <small
-                     class="comment-text">{{comment["text"]}}</small>
-                  <div class="d-flex flex-row align-items-center status">
-                     <small style="background-color:blue; color:white;">&nbsp;Like:
-                        {{post["info"]["reactions"].get("Thích", 0)}}&nbsp;</small>&nbsp;
-                     <small style="background-color:red; color:white;">&nbsp;Love: {{post["info"]["reactions"].get("Yêu
-                        thích", 0)}}&nbsp;</small>&nbsp;
-                     <small style="background-color:purple; color:white;">&nbsp;Sad:
-                        {{post["info"]["reactions"].get("Buồn", 0)}}&nbsp;</small>&nbsp;
-                     <small style="background-color:yellow; color:black;">&nbsp;Wow:
-                        {{post["info"]["reactions"].get("Wow", 0)}}&nbsp;</small>&nbsp;
-                     <small style="background-color:mediumvioletred; color:white;">Angry:
-                        {{post["info"]["reactions"].get("Phẫn nộ", 0)}}</small>&nbsp;
-                     <small style="background-color:greenyellow; color:black;">&nbsp;Haha:
-                        {{post["info"]["reactions"].get("Haha", 0)}} &nbsp;</small>&nbsp;
-                     <small style="background-color:palevioletred; color:white;">&nbsp;Care:
-                        {{post["info"]["reactions"].get("Thương thương", 0)}} &nbsp;</small>&nbsp;
+                  width="40" class="rounded-image"></div>
+               <div class="col-sm-10 ml-2"> 
+                  <div class="row"><span class="name">{{comment["username"]}}</span> </div>
+                  <div class="row"><small class="comment-text">{{comment["text"]}}</small></div>
+                  <div class="row row-cols-8 mx-auto align-items-start status text-center h-25 mt-1">
+                     <div class="col text-center">
+                        <img src="https://cdn.iconscout.com/icon/free/png-128/like-2387659-1991059.png" width="15">
+                        <small>{{comment["info"].get("reaction_count", 0)}}</small>
+                     </div>
+                     <div class="col text-center">
+                        <img src="https://static.thenounproject.com/png/1314304-200.png" width="15">
+                        <small>{{comment["info"].get("comments", 0)}}</small>
+                     </div>
                   </div>
                </div>
             </div>
@@ -214,9 +213,7 @@ News Detail {{post.id}} | HCMUT-EPFL
          </div>
       </div>
    </div>
-</div>
 <div class="container mb-3"></div>
-<div class="row">
    <div class="col-md-7">
       <div class="wp-block-snopes-fact-check-rating card mb-3 shadow p-3" data-component="claim-rating">
          <div class="card-header">
@@ -227,11 +224,10 @@ News Detail {{post.id}} | HCMUT-EPFL
             <div class="media position-relative">
                <div class="avatar-md avatar-lg-large mr-3">
                   <figure class="figure w-50 mb-0">
-                     <img alt="Mixture" class="figure-image img-responsive img-fluid w-50" height="50px" src="{% if post["is_fakenew"] == true %}
-                       https://www.pikpng.com/pngl/m/27-278340_download-button-correct-png-clipart.png
-                       {% else %}
-                       https://esquilo.io/png/thumb/7H0a9WDCxlqzXxs-Wrong-Sign-PNG-File.png
-                       {% endif %}" width="100px">
+                     <img alt="Mixture" class="figure-image img-responsive img-fluid w-50" height="50px"
+                        src="{% if post['is_fakenew'] == false %}
+                        https://www.pikpng.com/pngl/m/27-278340_download-button-correct-png-clipart.png {% else %}
+                        https://esquilo.io/png/thumb/7H0a9WDCxlqzXxs-Wrong-Sign-PNG-File.png {% endif %}" width="100px">
                      </img>
                   </figure>
                </div>
@@ -240,13 +236,13 @@ News Detail {{post.id}} | HCMUT-EPFL
                </div>
             </div>
          </div>
-         {% if post["is_fakenew"] == true %}
+         {% if post["is_fakenew"] == false %}
          <div class="claim-text card-body">
             <span class="h6 mb-1">True</span>
             <p>This is stated as a True News</p>
          </div>
          {% endif %}
-         {% if post["is_fakenew"] == false %}
+         {% if post["is_fakenew"] == true %}
          <div class="claim-text card-body">
             <span class="h6 mb-1">False</span>
             <p>This is stated as a Fake News</p>
@@ -277,10 +273,10 @@ News Detail {{post.id}} | HCMUT-EPFL
          <div class="single-body card-body rich-text">
             <p>This News is verified by</p>
             <ul>
-               <li class="{{'font-weight-bold' if post.get("is_verify_fakenew") == true or post.get("is_verify") == true}}" style="color:{{'green' if post.get("is_verify_fakenew") == true or post.get("is_verify") == true else 'gray'}};">Human Verification</li>
-               <li class="{{'font-weight-bold' if post.get("is_auto") == true}}" style="color:{{'green' if post.get("is_auto") == true else 'gray'}};">ML Classification</li>
-               <li class="{{'font-weight-bold' if post.get("is_fakenew") is none}}" style="color:{{'green' if post.get("is_fakenew") is none else 'gray'}};">Unverified</li>
-             </ul>
+               <li class="{{'font-weight-bold text-success' if post.get('is_verify_fakenew') == true or post.get('is_verify')==true}}">Human Verification</li>
+               <li class="{{'font-weight-bold text-success' if post.get('is_auto')==true}}">ML Classification</li>
+               <li class="{{'font-weight-bold text-success' if post.get('is_fakenew') is none}}">Unverified</li>
+            </ul>
          </div>
       </div>
       <div class="wp-block-snopes-fact-check-claim card mb-3 shadow p-3">
@@ -288,11 +284,10 @@ News Detail {{post.id}} | HCMUT-EPFL
             <h3 class="h6">Origin</h3>
          </div>
          <div class="single-body card-body rich-text">
-            <p>Original source: <a href={{post["post_url"]}}>{{post["post_url"]}}</a></p>
+            <p>Original source: <a href={{post['post_url']}}>{{post["post_url"]}}</a></p>
          </div>
       </div>
    </div>
-</div>
 <!-- <form action="{{next_id}}">
    <button class="btn btn-primary">Next</button>
 </form> -->
