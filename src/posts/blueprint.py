@@ -130,6 +130,7 @@ def posts_list():
     )
     posts = list(db.fbpost.aggregate([
             { "$match": all_filters },
+            { "$sort": {"is_verify_fakenew": -1}},
             { "$skip": 10 * page },  # No. of documents to skip (Should be `0` for Page - 1)
             { "$limit": 12 }  # No. of documents to be displayed on your webpage
         ]))
