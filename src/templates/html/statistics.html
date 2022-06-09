@@ -43,10 +43,10 @@ Statistics | HCMUT-EPFL
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-light mb-3" style="max-width: 18rem;">
+            <div class="card bg-warning mb-3" style="max-width: 18rem;">
                 <div class="card-body">
-                    <h1 class="card-title">{{main_stats['unverified_count']}}</h1>
-                    <a class="card-text stretched-link text-dark text-decoration-none" href=".?filter=non_medical" class="btn btn-primary stretched-link">Unverified News</a>
+                    <h1 class="card-title">{{main_stats['verified_count']}}</h1>
+                    <a class="card-text stretched-link text-dark text-decoration-none" href=".?filter=non_medical" class="btn btn-primary stretched-link">Verified News</a>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@ Statistics | HCMUT-EPFL
               <th scope="col">Non-medical</th>
               <th scope="col">True</th>
               <th scope="col">Fake</th>
-              <th scope="col">Unverified</th>
+              <th scope="col">Verified</th>
             </tr>
         </thead>
         {% for g in group_stats%}
@@ -73,7 +73,7 @@ Statistics | HCMUT-EPFL
                 <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&filter=non_medical">{{g['non_medical_count']}}</a></td>
                 <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&type=true">{{g['true_count']}}</a></td>
                 <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&type=fake">{{g['fake_count']}}</a></td>
-                <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&type=unverified">{{g['unverified_count']}}</a></td>
+                <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&type=unverified">{{g['verified_count']}} ({{'%.2f'|format(g['verified_count']*100/(g['true_count']+g['fake_count']))}}%)</a></td>
             </tr>
         </tbody>
         {% endfor %}

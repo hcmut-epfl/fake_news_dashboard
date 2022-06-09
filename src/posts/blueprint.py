@@ -157,7 +157,13 @@ def get_statistics():
         'non_medical_count': db.fbpost.count_documents({'is_medical': False}),
         'true_count': db.fbpost.count_documents({'is_fakenew': False}),
         'fake_count': db.fbpost.count_documents({'is_fakenew': True}),
-        'unverified_count': db.fbpost.count_documents({'is_fakenew': {"$exists": False}})
+        'verified_count': db.fbpost.count_documents({
+            "$or":
+                [
+                    {'is_verify_fakenew': True},
+                    {"is_verify": True}
+                ]
+        })
     }
     group_stats = list()
     
@@ -168,7 +174,11 @@ def get_statistics():
             'non_medical_count': db.fbpost.count_documents({'page_id': group, 'is_medical': False}),
             'true_count': db.fbpost.count_documents({'page_id': group, 'is_fakenew': False}),
             'fake_count': db.fbpost.count_documents({'page_id': group, 'is_fakenew': True}),
-            'unverified_count': db.fbpost.count_documents({'page_id': group, 'is_fakenew': {"$exists": False}})
+            'verified_count': db.fbpost.count_documents({'page_id': group, "$or":
+                [
+                    {'is_verify_fakenew': True},
+                    {"is_verify": True}
+                ]})
         })
 
     return render_template('html/statistics.html', main_stats=main_stats, group_stats=group_stats)
