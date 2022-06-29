@@ -153,33 +153,36 @@ def get_statistics():
     groups = db.fbpost.distinct('page_id')
     
     main_stats = {
+        'medical_news_count': db.fbpost.count_documents({'is_medical': True, 'type_post': {'$nin': [0, 2]}}),
         'medical_count': db.fbpost.count_documents({'is_medical': True}),
-        'non_medical_count': db.fbpost.count_documents({'is_medical': False}),
-        'true_count': db.fbpost.count_documents({'is_fakenew': False}),
-        'fake_count': db.fbpost.count_documents({'is_fakenew': True}),
+        'total_post_crawled': db.fbpost.count_documents({}),
+        'true_count': db.fbpost.count_documents({'is_medical': True, 'is_fakenew': False, 'type_post': {'$nin': [0, 2]}}),
+        'fake_count': db.fbpost.count_documents({'is_medical': True, 'is_fakenew': True, 'type_post': {'$nin': [0, 2]}}),
         'verified_count': db.fbpost.count_documents({
             "$or":
                 [
                     {'is_verify_fakenew': True},
                     {"is_verify": True}
-                ]
+                ],
+            'type_post': {'$nin': [0, 2]}
         })
     }
     group_stats = list()
     
     for group in groups:
-        group_stats.append({
+        gd = {
             'name': group,
-            'medical_count': db.fbpost.count_documents({'page_id': group, 'is_medical': True}),
-            'non_medical_count': db.fbpost.count_documents({'page_id': group, 'is_medical': False}),
-            'true_count': db.fbpost.count_documents({'page_id': group, 'is_fakenew': False}),
-            'fake_count': db.fbpost.count_documents({'page_id': group, 'is_fakenew': True}),
+            'medical_count': db.fbpost.count_documents({'page_id': group, 'is_medical': True, 'type_post': {'$nin': [0, 2]}}),
+            'true_count': db.fbpost.count_documents({'page_id': group, 'is_medical': True, 'is_fakenew': False, 'type_post': {'$nin': [0, 2]}}),
+            'fake_count': db.fbpost.count_documents({'page_id': group, 'is_medical': True, 'is_fakenew': True, 'type_post': {'$nin': [0, 2]}}),
             'verified_count': db.fbpost.count_documents({'page_id': group, "$or":
                 [
                     {'is_verify_fakenew': True},
                     {"is_verify": True}
-                ]})
-        })
+                ]}),
+                'type_post': {'$nin': [0, 2]}
+        }
+        group_stats.append(gd)
 
     return render_template('html/statistics.html', main_stats=main_stats, group_stats=group_stats)
 
@@ -303,3 +306,12 @@ def export_json():
                         "attachment",
                         filename='news.json')
     return response
+
+
+@posts.route('/label_medical', methods=['GET'])
+def medical_label():
+    posts = db.fbpost.aggregate([
+            { "$match": {"is_auto": {"$ne": False}} },
+            { "$sample": {"size": 50} }  # No. of documents to be displayed on your webpage
+        ])
+    return render_template('html/label_medical.html', posts=posts)

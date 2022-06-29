@@ -219,15 +219,58 @@ News Detail {{post.id}} | HCMUT-EPFL
          <div class="card-header">
             <h3 class="h6">News Check</h3>
          </div>
-         {% if "is_fakenew" in post %}
+         {% if post.get("type_post") not in [0,2] %}
+            {% if "is_fakenew" in post %}
+            <div class="card-body">
+               <div class="media position-relative">
+                  <div class="avatar-md avatar-lg-large mr-3">
+                     <figure class="figure w-50 mb-0">
+                        <img alt="Mixture" class="figure-image img-responsive img-fluid w-50" height="50px"
+                           src="{% if post['is_fakenew'] == false %}
+                           https://www.pikpng.com/pngl/m/27-278340_download-button-correct-png-clipart.png {% else %}
+                           https://esquilo.io/png/thumb/7H0a9WDCxlqzXxs-Wrong-Sign-PNG-File.png {% endif %}" width="100px">
+                        </img>
+                     </figure>
+                  </div>
+                  <div class="media-body d-flex flex-column align-self-center">
+                     <span class="h3 rating-label-mixture">{{post.rating_text}}</span>
+                  </div>
+               </div>
+            </div>
+            {% if post["is_fakenew"] == false %}
+            <div class="claim-text card-body">
+               <span class="h6 mb-1">True</span>
+               <p>This is stated as a True News</p>
+            </div>
+            {% endif %}
+            {% if post["is_fakenew"] == true %}
+            <div class="claim-text card-body">
+               <span class="h6 mb-1">False</span>
+               <p>This is stated as a Fake News</p>
+            </div>
+            {% endif %}
+            {%else%}
+            <div class="claim-text card-body">
+               <span class="h6 mb-1">Unverified</span>
+               <p>This post is currently unverified or the claim statement is still empty.</p>
+            </div>
+            {%endif%}
+            {%if current_user.is_authenticated %}
+            <div class="card-body">
+               <span class="h6 mb-1">For Admin only</span>
+               <p>Edit the fact or content of this post</p>
+               <form action="edit_{{post.id}}">
+                  <button class="btn btn-primary">Edit</button>
+               </form>
+            </div>
+            {%endif%}
+         {%else%}
          <div class="card-body">
             <div class="media position-relative">
                <div class="avatar-md avatar-lg-large mr-3">
                   <figure class="figure w-50 mb-0">
                      <img alt="Mixture" class="figure-image img-responsive img-fluid w-50" height="50px"
-                        src="{% if post['is_fakenew'] == false %}
-                        https://www.pikpng.com/pngl/m/27-278340_download-button-correct-png-clipart.png {% else %}
-                        https://esquilo.io/png/thumb/7H0a9WDCxlqzXxs-Wrong-Sign-PNG-File.png {% endif %}" width="100px">
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Lol_question_mark.png/640px-Lol_question_mark.png" width="100px">
                      </img>
                   </figure>
                </div>
@@ -236,31 +279,9 @@ News Detail {{post.id}} | HCMUT-EPFL
                </div>
             </div>
          </div>
-         {% if post["is_fakenew"] == false %}
          <div class="claim-text card-body">
-            <span class="h6 mb-1">True</span>
-            <p>This is stated as a True News</p>
-         </div>
-         {% endif %}
-         {% if post["is_fakenew"] == true %}
-         <div class="claim-text card-body">
-            <span class="h6 mb-1">False</span>
-            <p>This is stated as a Fake News</p>
-         </div>
-         {% endif %}
-         {%else%}
-         <div class="claim-text card-body">
-            <span class="h6 mb-1">Unverified</span>
-            <p>This post is currently unverified or the claim statement is still empty.</p>
-         </div>
-         {%endif%}
-         {%if current_user.is_authenticated %}
-         <div class="card-body">
-            <span class="h6 mb-1">For Admin only</span>
-            <p>Edit the fact or content of this post</p>
-            <form action="edit_{{post.id}}">
-               <button class="btn btn-primary">Edit</button>
-            </form>
+            <span class="h6 mb-1">Not a News</span>
+            <p>This post may not include any statement to be classified as True or Fake, or contains too personal information that is difficult to assign a label.</p>
          </div>
          {%endif%}
       </div>
