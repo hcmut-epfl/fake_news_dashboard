@@ -154,6 +154,7 @@ def get_statistics():
     
     main_stats = {
         'medical_news_count': db.fbpost.count_documents({'is_medical': True, 'type_post': {'$nin': [0, 2]}}),
+        'confirmed_medical_count': db.fbpost.count_documents({'is_medical': True, 'type_post': {'$exists': True, '$eq': 1}}),
         'medical_count': db.fbpost.count_documents({'is_medical': True}),
         'total_post_crawled': db.fbpost.count_documents({}),
         'true_count': db.fbpost.count_documents({'is_medical': True, 'is_fakenew': False, 'type_post': {'$nin': [0, 2]}}),

@@ -26,7 +26,7 @@ Project Fake News | HCMUT-EPFL
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item {{'font-weight-bold' if type=='true'}}" href="?type=true{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">True News</a>
                     <a class="dropdown-item {{'font-weight-bold' if type=='fake'}}" href="?type=fake{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">Fake News</a>
-                    <a class="dropdown-item {{'font-weight-bold' if type=='unverified'}}" href="?type=unverified{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">Unverified</a>
+                    <a class="dropdown-item {{'font-weight-bold' if type=='unverified'}}" href="?type=unverified{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">Unchecked</a>
                     <div class="dropdown-divider"></div>
                     {% for g in groups %}
                     <a class="dropdown-item {{'font-weight-bold' if group==g}}" href="?group={{g}}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">{{g}}</a>
@@ -50,24 +50,21 @@ Project Fake News | HCMUT-EPFL
                         <!-- <h5 class="card-title">{{post.title}}</h5> -->
                         <p class="card-text">{{' '.join(post['text'].split()[:30])}}</p>
                         {% if 'is_medical' in post %}
-                            {% if post['is_medical'] == false %}
+                            {% if not post['is_medical'] or post['is_medical'] == 'false' %}
                             <span class="tag">Not Medical</span>
                             {% else %}
                             <span class="tag" style="background-color:blue;color:white;">Medical</span>
-                            {% if 'type_post' in post %}
-                                {% if post['type_post'] == 2 %} 
+                            {% if post.get('type_post') == 2 %} 
                                 <span class="tag" style="background-color:rgb(225, 127, 0);">Personal</span>
-                                {% elif post['type_post'] == 0 %} 
+                            {% elif post.get('type_post') == 0 %} 
                                 <span class="tag" style="background-color:rgb(225, 127, 0);">Question</span>
-                                {%else%}
-                                    
-                                    {% if 'is_fakenew' in post %}
-                                        {% if post['is_fakenew'] == false %}
-                                        <span class="tag" style="background-color:green;color:white;">True</span>
-                                        {% else %}
-                                        <span class="tag" style="background-color:red;color:white;">Fake</span>
-                                        {% endif %}
-                                    {%endif%}
+                            {%else%}
+                                {% if 'is_fakenew' in post %}
+                                    {% if not post['is_fakenew'] or post['is_fakenew'] == 'false' %}
+                                    <span class="tag" style="background-color:green;color:white;">True</span>
+                                    {% else %}
+                                    <span class="tag" style="background-color:red;color:white;">Fake</span>
+                                    {% endif %}
                                 {%endif%}
                             {%endif%}
                             {% endif %}
