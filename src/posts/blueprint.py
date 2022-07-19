@@ -14,11 +14,16 @@ from flask_security import login_required
 from src.ml.medical_classifier import MedicalClassifier
 from src.posts.forms import PostForm
 from src.app import db
+import unidecode
+ 
+def remove_accent(text):
+    return unidecode.unidecode(text)
 
 posts = Blueprint(
     'posts',
     __name__,
     template_folder='templates',
+    static_folder='static'
 )
 
 @posts.route('/create', methods=['POST', 'GET'])
@@ -72,13 +77,15 @@ def post_create():
 @posts.route('/')
 def posts_list():
     q = request.args.get('q')
+    if q is not None:
+        q = remove_accent(q)
     filter_title = list()
     
     groups = db.fbpost.distinct('page_id')
     all_filters = {}
 
     if q:
-        all_filters["text"] = {"$regex": f"/.*{q}.*/"}
+        all_filters["text"] = {"$regex": q}
 
     filter = request.args.get('filter')
     if filter == "medical":
@@ -128,6 +135,7 @@ def posts_list():
         has_next=(page != p_count),
         iter_pages=iter_pages,
     )
+    print(all_filters)
     posts = list(db.fbpost.aggregate([
             { "$match": all_filters },
             { "$sort": {"is_verify_fakenew": -1}},
@@ -160,13 +168,11 @@ def get_statistics():
         'true_count': db.fbpost.count_documents({'is_medical': True, 'is_fakenew': False, 'type_post': {'$nin': [0, 2]}}),
         'fake_count': db.fbpost.count_documents({'is_medical': True, 'is_fakenew': True, 'type_post': {'$nin': [0, 2]}}),
         'verified_count': db.fbpost.count_documents({
-            "$or":
-                [
-                    {'is_verify_fakenew': True},
-                    {"is_verify": True}
-                ],
-            'type_post': {'$nin': [0, 2]}
-        })
+                'is_medical': True,
+                'is_fakenew': {"$exists": True},
+                'is_verify_fakenew': True,
+                'type_post': {'$nin': [0, 2]}
+            })
     }
     group_stats = list()
     
@@ -176,12 +182,13 @@ def get_statistics():
             'medical_count': db.fbpost.count_documents({'page_id': group, 'is_medical': True, 'type_post': {'$nin': [0, 2]}}),
             'true_count': db.fbpost.count_documents({'page_id': group, 'is_medical': True, 'is_fakenew': False, 'type_post': {'$nin': [0, 2]}}),
             'fake_count': db.fbpost.count_documents({'page_id': group, 'is_medical': True, 'is_fakenew': True, 'type_post': {'$nin': [0, 2]}}),
-            'verified_count': db.fbpost.count_documents({'page_id': group, "$or":
-                [
-                    {'is_verify_fakenew': True},
-                    {"is_verify": True}
-                ]}),
+            'verified_count': db.fbpost.count_documents({
+                'page_id': group,
+                'is_medical': True,
+                'is_fakenew': {"$exists": True},
+                'is_verify_fakenew': True,
                 'type_post': {'$nin': [0, 2]}
+            })
         }
         group_stats.append(gd)
 
@@ -206,12 +213,14 @@ def post_detail(id):
 @posts.route('/edit_<id>', methods=['POST','GET'])
 @login_required
 def post_update(id):
-    post = Post.query.filter(Post.id==id).first_or_404()
+    oid = ObjectId(id)
+    post = db.fbpost.find_one({"_id": oid})
+    print(post)
     if request.method == 'POST':
-        form = PostForm(formdata=request.form, obj=post)
+        form = PostForm(obj=post)
         form.populate_obj(post)
-        db.session.commit()
-        return redirect(f'fakenews/{id}')
+        print(post)
+        return redirect(f'/{id}')
     form = PostForm(obj=post)
     return render_template('html/edit.html', post=post, form=form)
 
@@ -309,10 +318,77 @@ def export_json():
     return response
 
 
-@posts.route('/label_medical', methods=['GET'])
+@posts.route('/label_medical', methods=['GET', 'POST'])
 def medical_label():
+    if request.method == 'POST':
+        multi_dict = request.form
+        for key in multi_dict:
+            fact, id = key.split('_')
+            oid = ObjectId(id)
+            try:
+                result = db.fbpost.update_one(
+                    {"_id": oid},
+                    { "$set": { 
+                            "is_medical": (fact == 'true'),
+                            "is_verify": True
+                        }
+                    }
+                )
+            except Exception as e:
+                raise(e)
     posts = db.fbpost.aggregate([
-            { "$match": {"is_auto": {"$ne": False}} },
+            { "$match": {"is_verify": {"$ne": True}} },
             { "$sample": {"size": 50} }  # No. of documents to be displayed on your webpage
         ])
     return render_template('html/label_medical.html', posts=posts)
+
+@posts.route('/label_question', methods=['GET', 'POST'])
+def question_label():
+    if request.method == 'POST':
+        multi_dict = request.form
+        for key in multi_dict:
+            fact, id = key.split('_')
+            oid = ObjectId(id)
+            try:
+                result = db.fbpost.update_one(
+                    {"_id": oid},
+                    { "$set": { 
+                            "type_post": 1 if (fact == 'true') else 0,
+                            "is_verify_type_post": True
+                        }
+                    }
+                )
+                print(db.post.find_one({"_id": oid}))
+            except Exception as e:
+                raise(e)
+    posts = db.fbpost.aggregate([
+            { "$match": {"is_verify_type_post": {"$ne": True}, "is_medical": True} },
+            { "$sample": {"size": 50} }  # No. of documents to be displayed on your webpage
+        ])
+    return render_template('html/label_question.html', posts=posts)
+
+@posts.route('/label_true_fake', methods=['GET', 'POST'])
+def true_fake_label():
+    if request.method == 'POST':
+        multi_dict = request.form
+        print(multi_dict)
+        for key in multi_dict:
+            fact, id = key.split('_')
+            oid = ObjectId(id)
+            try:
+                result = db.fbpost.update_one(
+                    {"_id": oid},
+                    { "$set": { 
+                            "is_fakenew":  (fact == 'false'),
+                            "is_verify_fakenew": True
+                        }
+                    }
+                )
+                post = db.fbpost.find_one({"_id": oid})
+            except Exception as e:
+                raise(e)
+    posts = db.fbpost.aggregate([
+            { "$match": {"is_verify_fakenew": {"$ne": True}, "is_medical": True, "type_post": 1}},
+            { "$sample": {"size": 50} }  # No. of documents to be displayed on your webpage
+        ])
+    return render_template('html/label_true_fake.html', posts=posts)

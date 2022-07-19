@@ -5,110 +5,143 @@ Project Fake News | HCMUT-EPFL
 {% endblock %}
 
 {% block content %}
-<div class="col-lg-8">
-    <div class="row g-0">
-        <div class="col-lg-8">
-            <h3>News Check</h3>
-        </div>
-        <div class="col-lg-4">
-            <div class="btn-group">
-                <button type="button" class="btn btn-primary" style="width: 200px !important; height: 37px !important;">{{ filter_title }}</button>
-                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                    style="height: 37px !important;">
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="?">All News</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item {{'font-weight-bold' if filter=='medical'}}" href="?filter=medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Medical</a>
-                    <a class="dropdown-item {{'font-weight-bold' if filter=='non_medical'}}" href="?filter=non_medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">Not Medical</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item {{'font-weight-bold' if type=='true'}}" href="?type=true{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">True News</a>
-                    <a class="dropdown-item {{'font-weight-bold' if type=='fake'}}" href="?type=fake{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">Fake News</a>
-                    <a class="dropdown-item {{'font-weight-bold' if type=='unverified'}}" href="?type=unverified{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">Unchecked</a>
-                    <div class="dropdown-divider"></div>
-                    {% for g in groups %}
-                    <a class="dropdown-item {{'font-weight-bold' if group==g}}" href="?group={{g}}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">{{g}}</a>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div class="container p-2"></div>
-    </div>
 
-    {% for post in posts[:10] %}
-    <a href="{{post['_id']}}" class="post-anchor-wrapper post">
-        <div class="card mb-3 shadow-sm" style="max-width: 1000px;">
-            <div class="row g-0">
-                <!-- <div class="col-md-4">
-                        <img src="{{post.thumnail}}" class="img-fluid rounded-start h-100" 
-                        style="max-height:100%; max-width:100%; object-fit: cover;  overflow: hidden;" alt="...">
-                    </div> -->
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <!-- <h5 class="card-title">{{post.title}}</h5> -->
-                        <p class="card-text">{{' '.join(post['text'].split()[:30])}}</p>
-                        {% if 'is_medical' in post %}
-                            {% if not post['is_medical'] or post['is_medical'] == 'false' %}
-                            <span class="tag">Not Medical</span>
-                            {% else %}
-                            <span class="tag" style="background-color:blue;color:white;">Medical</span>
-                            {% if post.get('type_post') == 2 %} 
-                                <span class="tag" style="background-color:rgb(225, 127, 0);">Personal</span>
-                            {% elif post.get('type_post') == 0 %} 
-                                <span class="tag" style="background-color:rgb(225, 127, 0);">Question</span>
-                            {%else%}
-                                {% if 'is_fakenew' in post %}
-                                    {% if not post['is_fakenew'] or post['is_fakenew'] == 'false' %}
-                                    <span class="tag" style="background-color:green;color:white;">True</span>
-                                    {% else %}
-                                    <span class="tag" style="background-color:red;color:white;">Fake</span>
-                                    {% endif %}
-                                {%endif%}
-                            {%endif%}
-                            {% endif %}
-                        {%endif%}
-                        
-                        <span class="tag" style="background-color:paleturquoise;">{{post['page_id']}}</span>
+<style>
+    tr[data-href] {
+        cursor: pointer;
+    }
+</style>
+
+<div class="col-12">
+    <div class="card">
+        <div class="card-body">
+            <!-- title -->
+            <div class="d-md-flex align-items-center">
+                <div>
+                    <h4 class="card-title">Medical News Check</h4>
+                    <h5 class="card-subtitle">{{ filter_title }}</h5>
+                </div>
+                <div class="ml-auto">
+                    <div class="dl">
+                        <select class="custom-select" onchange="window.open(this.value,'_self');">
+                            <option>---Select News---</option>
+                            <option value="..">All News</option>
+                            <option disabled>---Medicality---</option>
+                            <option class="{{'font-weight-bold' if filter=='medical'}}"
+                                value="?filter=medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">
+                                Medical</option>
+                            <option class="dropdown-item {{'font-weight-bold' if filter=='non_medical'}}"
+                                value="?filter=non_medical{% if group|length>0 %}&group={{group}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">
+                                Not
+                                Medical</a>
+                            <option disabled>---Verification---</option>
+                            <option class="dropdown-item {{'font-weight-bold' if type=='true'}}"
+                                value="?type=true{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">
+                                True
+                                News</option>
+                            <option class="dropdown-item {{'font-weight-bold' if type=='fake'}}"
+                                value="?type=fake{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">
+                                Fake
+                                News</option>
+                            <option class="dropdown-item {{'font-weight-bold' if type=='unverified'}}"
+                                value="?type=unverified{% if group|length>0 %}&group={{group}}{% endif %}{% if filter|length>0 %}&filter={{filter}}{% endif %}">
+                                Unchecked</option>
+                            <option disabled>---Group---</option>
+                            {% for g in groups %}
+                            <option class="dropdown-item {{'font-weight-bold' if group==g}}"
+                                value="?group={{g}}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if type|length>0 %}&type={{type}}{% endif %}">
+                                {{g}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
             </div>
+            <!-- title -->
         </div>
-    </a>
-    {% endfor %}
-</div>
-
-<div class="col-lg-4 d-none d-lg-block">
-    <h3>Up next for you</h3>
-
-    <div>
-        {% for post in posts[-2:] %}
-
-        <a href="{{post.id}}" class="post-anchor-wrapper post">
-            <div class="card mb-3" style="width: 18rem;">
-                <!-- <img src="{{post.thumnail}}" class="card-img-top" alt="..."> -->
-                <div class="card-body">
-                    <!-- <h5 class="card-title">{{post.title}}</h5> -->
-                    <p class="card-text">{{post['text'][:100]}}</p>
-                </div>
-            </div>
-        </a>
-        {% endfor %}
-
+        <div class="table-responsive">
+            <table class="table v-middle">
+                <thead>
+                    <tr class="bg-light">
+                        <th class="border-top-0">News</th>
+                        <th class="border-top-0">Group ID</th>
+                        <th class="border-top-0">Medical</th>
+                        <th class="border-top-0">True/Fake</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts[:10] %}
+                    <a>
+                        <tr data-href="{{post['_id']}}">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <!-- <div class="m-r-10"><a class="btn btn-circle btn-info text-white">EA</a></div> -->
+                                    <div class="">
+                                        <p class="m-b-0 font-16">{{' '.join(post['text'].split()[:30])}}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{post['page_id']}}</td>
+                            <td>
+                                {% if 'is_medical' in post %}
+                                {% if not post['is_medical'] or post['is_medical'] == 'false' %}
+                                <span class="label label-primary font-12">Nonmed</span>
+                                {% else %}
+                                <span class="label label-megna font-12">Medical</span>
+                                {% endif %}
+                                {% else %}
+                                <span class="label label-info font-12">Unverified</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if post.get('type_post') == 2 %}
+                                <span class="label label-warning font-12">Personal</span>
+                                {% elif post.get('type_post') == 0 %}
+                                <span class="label label-warning font-12">Question</span>
+                                {%else%}
+                                {% if 'is_fakenew' in post %}
+                                {% if not post['is_fakenew'] or post['is_fakenew'] == 'false' %}
+                                <span class="label label-success font-12">True</span>
+                                {% else %}
+                                <span class="label label-danger font-12">Fake</span>
+                                {% endif %}
+                                {% else %}
+                                <span class="label label-info font-12">Unverified</span>
+                                {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </a>
+                    {% endfor %}
+                    <script>
+                        document.addEventListener("DOMContentLoaded", () => {
+                            const rows = document.querySelectorAll("tr[data-href]");
+                            rows.forEach(row => {
+                                row.addEventListener("click", () => {
+                                    window.location.href = row.dataset.href;
+                                });
+                            });
+                        });
+                    </script>
+                    
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <nav aria-label="...">
     <ul class="pagination">
         <li class="page-item {% if not pages.has_prev %} disabled {% endif %}">
-            <a class="page-link" href="?page={{ cur_page-1 }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Previous</a>
+            <a class="page-link"
+                href="?page={{ cur_page-1 }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Previous</a>
         </li>
 
         {% for page in pages.iter_pages %}
         {% if page %}
         <li class="page-item {% if page == pages.page %} active {% endif %}">
-            <a class="page-link" href="?page={{ page }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">{{ page }} <span class="sr-only">(current)</span></a>
+            <a class="page-link"
+                href="?page={{ page }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">{{
+                page }} <span class="sr-only">(current)</span></a>
         </li>
         {%else%}
         <li class="page-item {% if page == pages.page %} active {% endif %}">
@@ -118,7 +151,8 @@ Project Fake News | HCMUT-EPFL
         {% endfor %}
 
         <li class="page-item {% if not pages.has_next %} disabled {% endif %}">
-            <a class="page-link" href="?page={{ cur_page+1 }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Next</a>
+            <a class="page-link"
+                href="?page={{ cur_page+1 }}{% if filter|length>0 %}&filter={{filter}}{% endif %}{% if group|length>0 %}&group={{group}}{% endif %}">Next</a>
         </li>
     </ul>
 </nav>

@@ -227,8 +227,8 @@ News Detail {{post.id}} | HCMUT-EPFL
                      <figure class="figure w-50 mb-0">
                         <img alt="Mixture" class="figure-image img-responsive img-fluid w-50" height="50px"
                            src="{% if post['is_fakenew'] == false %}
-                           https://www.pikpng.com/pngl/m/27-278340_download-button-correct-png-clipart.png {% else %}
-                           https://esquilo.io/png/thumb/7H0a9WDCxlqzXxs-Wrong-Sign-PNG-File.png {% endif %}" width="100px">
+                           https://i.pinimg.com/originals/c7/75/fc/c775fc6d3433da085d8f579f54b7c758.jpg {% else %}
+                           https://i.pinimg.com/originals/d0/17/47/d01747c4285afa4e7a6e8656c9cd60cb.png {% endif %}" width="100px">
                         </img>
                      </figure>
                   </div>
@@ -259,7 +259,7 @@ News Detail {{post.id}} | HCMUT-EPFL
             <div class="card-body">
                <span class="h6 mb-1">For Admin only</span>
                <p>Edit the fact or content of this post</p>
-               <form action="edit_{{post.id}}">
+               <form action="edit_{{post['_id']}}">
                   <button class="btn btn-primary">Edit</button>
                </form>
             </div>
@@ -294,8 +294,8 @@ News Detail {{post.id}} | HCMUT-EPFL
          <div class="single-body card-body rich-text">
             <p>This News is verified by</p>
             <ul>
-               <li class="{{'font-weight-bold text-success' if post.get('is_verify_fakenew') == true or post.get('is_verify')==true}}">Human Verification</li>
-               <li class="{{'font-weight-bold text-success' if post.get('is_auto')==true}}">ML Classification</li>
+               <li class="{{'font-weight-bold text-success' if post.get('is_verify_fakenew') == true}}">Human Verification</li>
+               <li class="{{'font-weight-bold text-success' if post.get('is_verify_fakenew') != true and 'is_fakenew' in post}}">ML Classification</li>
                <li class="{{'font-weight-bold text-success' if post.get('is_fakenew') is none}}">Unverified</li>
             </ul>
          </div>

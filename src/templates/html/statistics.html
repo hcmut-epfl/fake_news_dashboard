@@ -7,14 +7,14 @@ Statistics | HCMUT-EPFL
 {% block content %}
 
 <div class="col-12">
-    <h1>Statistics</h1>
-    <br>
     <div class="row">
         <div class="col-md-4">
             <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
                 <div class="card-body">
                     <h1 class="card-title">{{main_stats['medical_news_count']}}</h1>
-                    <a class="card-text stretched-link text-white text-decoration-none" href=".?filter=medical" class="btn btn-primary stretched-link">Medical News ({{main_stats['confirmed_medical_count']}} confirmed)</a>
+                    <a class="card-text stretched-link text-white text-decoration-none" href=".?filter=medical"
+                        class="btn btn-primary stretched-link">Medical News ({{main_stats['confirmed_medical_count']}}
+                        confirmed)</a>
                 </div>
             </div>
         </div>
@@ -22,7 +22,8 @@ Statistics | HCMUT-EPFL
             <div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
                 <div class="card-body">
                     <h1 class="card-title">{{main_stats['medical_count']}}</h1>
-                    <a class="card-text stretched-link text-white text-decoration-none" href=".?filter=non_medical" class="btn btn-primary stretched-link">Medical Posts</a>
+                    <a class="card-text stretched-link text-white text-decoration-none" href=".?filter=non_medical"
+                        class="btn btn-primary stretched-link">Medical Posts</a>
                 </div>
             </div>
         </div>
@@ -30,7 +31,8 @@ Statistics | HCMUT-EPFL
             <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
                 <div class="card-body">
                     <h1 class="card-title">{{main_stats['total_post_crawled']}}</h1>
-                    <a class="card-text stretched-link text-white text-decoration-none" href=".?filter=non_medical" class="btn btn-primary stretched-link">Total Posts</a>
+                    <a class="card-text stretched-link text-white text-decoration-none" href=".?filter=non_medical"
+                        class="btn btn-primary stretched-link">Total Posts</a>
                 </div>
             </div>
         </div>
@@ -38,7 +40,8 @@ Statistics | HCMUT-EPFL
             <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
                 <div class="card-body">
                     <h1 class="card-title">{{main_stats['true_count']}}</h1>
-                    <a class="card-text stretched-link text-white text-decoration-none" href=".?type=true" class="btn btn-primary stretched-link">True News</a>
+                    <a class="card-text stretched-link text-white text-decoration-none" href=".?type=true"
+                        class="btn btn-primary stretched-link">True News</a>
                 </div>
             </div>
         </div>
@@ -46,7 +49,8 @@ Statistics | HCMUT-EPFL
             <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
                 <div class="card-body">
                     <h1 class="card-title">{{main_stats['fake_count']}}</h1>
-                    <a class="card-text stretched-link text-white text-decoration-none" href=".?type=fake" class="btn btn-primary stretched-link">Fake News</a>
+                    <a class="card-text stretched-link text-white text-decoration-none" href=".?type=fake"
+                        class="btn btn-primary stretched-link">Fake News</a>
                 </div>
             </div>
         </div>
@@ -54,35 +58,45 @@ Statistics | HCMUT-EPFL
             <div class="card bg-warning mb-3" style="max-width: 18rem;">
                 <div class="card-body">
                     <h1 class="card-title">{{main_stats['verified_count']}}</h1>
-                    <a class="card-text stretched-link text-dark text-decoration-none" href=".?filter=non_medical" class="btn btn-primary stretched-link">Verified News</a>
+                    <a class="card-text stretched-link text-dark text-decoration-none" href=".?filter=non_medical"
+                        class="btn btn-primary stretched-link">Verified News</a>
                 </div>
             </div>
         </div>
     </div>
     <br>
-    <table class="table">
-        <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Group ID</th>
-              <th scope="col">Medical</th>
-              <th scope="col">True</th>
-              <th scope="col">Fake</th>
-              <th scope="col">Verified</th>
-            </tr>
-        </thead>
-        {% for g in group_stats%}
-        <tbody>
-            <tr>
-                <th scope="row">{{loop.index}}</th>
-                <td><a href=".?group={{g['name']}}">{{g['name']}}</a></td>
-                <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&filter=medical">{{g['medical_count']}}</a></td>
-                <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&type=true">{{g['true_count']}}</a></td>
-                <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&type=fake">{{g['fake_count']}}</a></td>
-                <td><a class="text-decoration-none text-dark" href=".?group={{g['name']}}&type=unverified">{{g['verified_count']}} ({{'%.2f'|format(g['verified_count']*100/(g['true_count']+g['fake_count']))}}%)</a></td>
-            </tr>
-        </tbody>
-        {% endfor %}
-    </table>
+    <div class="card">
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Group ID</th>
+                        <th scope="col">Medical</th>
+                        <th scope="col">True</th>
+                        <th scope="col">Fake</th>
+                        <th scope="col">Verified</th>
+                    </tr>
+                </thead>
+                {% for g in group_stats%}
+                <tbody>
+                    <tr>
+                        <th scope="row">{{loop.index}}</th>
+                        <td><a href=".?group={{g['name']}}">{{g['name']}}</a></td>
+                        <td><a class="text-decoration-none text-dark"
+                                href=".?group={{g['name']}}&filter=medical">{{g['medical_count']}}</a></td>
+                        <td><a class="text-decoration-none text-dark"
+                                href=".?group={{g['name']}}&type=true">{{g['true_count']}}</a></td>
+                        <td><a class="text-decoration-none text-dark"
+                                href=".?group={{g['name']}}&type=fake">{{g['fake_count']}}</a></td>
+                        <td><a class="text-decoration-none text-dark"
+                                href=".?group={{g['name']}}&type=unverified">{{g['verified_count']}}
+                                ({{'%.2f'|format(g['verified_count']*100/(g['true_count']+g['fake_count']))}}%)</a></td>
+                    </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
