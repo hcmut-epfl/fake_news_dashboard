@@ -23,7 +23,7 @@ posts = Blueprint(
     'posts',
     __name__,
     template_folder='templates',
-    static_folder='fakenews/static'
+    static_url_path='https://www.ura.hcmut.edu.vn/fakenews/static'
 )
 
 @posts.route('/create', methods=['POST', 'GET'])
