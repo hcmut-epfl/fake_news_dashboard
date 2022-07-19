@@ -17,9 +17,9 @@
   </title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <!-- Custom CSS -->
-  <link href="{{url_for('fakenews/static', filename='assets/libs/chartist/dist/chartist.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='assets/libs/chartist/dist/chartist.min.css')}}" rel="stylesheet">
   <!-- Custom CSS -->
-  <link href="{{url_for('fakenews/static', filename='dist/css/style.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='dist/css/style.min.css')}}" rel="stylesheet">
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -96,7 +96,7 @@
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href=""
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img
-                  src="{{url_for('fakenews/static', filename='assets/images/users/d1.jpg') if current_user.is_authenticated else url_for('fakenews/static', filename='assets/images/users/1.jpg')}}" alt="user" class="rounded-circle"
+                  src="{{url_for('static', filename='assets/images/users/d1.jpg') if current_user.is_authenticated else url_for('static', filename='assets/images/users/1.jpg')}}" alt="user" class="rounded-circle"
                   width="31"></a>
               <div class="dropdown-menu dropdown-menu-right user-dd animated">
                 <a class="dropdown-item" href="javascript:void(0)"><i class="ti-user m-r-5 m-l-5"></i> My Profile</a>
@@ -127,7 +127,7 @@
             <li>
               <!-- User Profile-->
               <div class="user-profile d-flex no-block dropdown m-t-20">
-                <div class="user-pic"><img src="{{url_for('fakenews/static', filename='assets/images/users/d1.jpg') if current_user.is_authenticated else url_for('fakenews/static', filename='assets/images/users/1.jpg')}}" alt="users"
+                <div class="user-pic"><img src="{{url_for('static', filename='assets/images/users/d1.jpg') if current_user.is_authenticated else url_for('static', filename='assets/images/users/1.jpg')}}" alt="users"
                     class="rounded-circle" width="40" /></div>
                 <div class="user-content hide-menu m-l-10">
                   <a href="javascript:void(0)" class="" id="Userdd" role="button" data-toggle="dropdown"
@@ -225,7 +225,7 @@
               </div>
               <div class="comment-widgets scrollable">
                 <div class="d-flex flex-row comment-row m-t-0">
-                  <div class="p-2"><img src="{{url_for('fakenews/static', filename='assets/images/users/1.jpg')}}" alt="user"
+                  <div class="p-2"><img src="{{url_for('static', filename='assets/images/users/1.jpg')}}" alt="user"
                       width="50" class="rounded-circle"></div>
                   <div class="comment-text w-100">
                     <h6 class="font-medium">James Anderson</h6>
@@ -242,7 +242,7 @@
                   </div>
                 </div>
                 <div class="d-flex flex-row comment-row">
-                  <div class="p-2"><img src="{{url_for('fakenews/static', filename='assets/images/users/4.jpg')}}" alt="user"
+                  <div class="p-2"><img src="{{url_for('static', filename='assets/images/users/4.jpg')}}" alt="user"
                       width="50" class="rounded-circle"></div>
                   <div class="comment-text active w-100">
                     <h6 class="font-medium">Michael Jorden</h6>
@@ -260,7 +260,7 @@
                   </div>
                 </div>
                 <div class="d-flex flex-row comment-row">
-                  <div class="p-2"><img src="{{url_for('fakenews/static', filename='assets/images/users/5.jpg')}}" alt="user"
+                  <div class="p-2"><img src="{{url_for('static', filename='assets/images/users/5.jpg')}}" alt="user"
                       width="50" class="rounded-circle"></div>
                   <div class="comment-text w-100">
                     <h6 class="font-medium">Johnathan Doeting</h6>
@@ -351,23 +351,23 @@
     <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
-    <script src="{{url_for('fakenews/static', filename='assets/libs/jquery/dist/jquery.min.js')}}"></script>
+    <script src="{{url_for('static', filename='assets/libs/jquery/dist/jquery.min.js')}}"></script>
     <!-- Bootstrap tether Core JavaScript -->
-    <script src="{{url_for('fakenews/static', filename='assets/libs/popper.js/dist/umd/popper.min.js')}}"></script>
-    <script src="{{url_for('fakenews/static', filename='assets/libs/bootstrap/dist/js/bootstrap.min.js')}}"></script>
-    <script src="{{url_for('fakenews/static', filename='dist/js/app-style-switcher.js')}}"></script>
+    <script src="{{url_for('static', filename='assets/libs/popper.js/dist/umd/popper.min.js')}}"></script>
+    <script src="{{url_for('static', filename='assets/libs/bootstrap/dist/js/bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static', filename='dist/js/app-style-switcher.js')}}"></script>
     <!--Wave Effects -->
-    <script src="{{url_for('fakenews/static', filename='dist/js/waves.js')}}"></script>
+    <script src="{{url_for('static', filename='dist/js/waves.js')}}"></script>
     <!--Menu sidebar -->
-    <script src="{{url_for('fakenews/static', filename='dist/js/sidebarmenu.js')}}"></script>
+    <script src="{{url_for('static', filename='dist/js/sidebarmenu.js')}}"></script>
     <!--Custom JavaScript -->
-    <script src="{{url_for('fakenews/static', filename='dist/js/custom.js')}}"></script>
+    <script src="{{url_for('static', filename='dist/js/custom.js')}}"></script>
     <!--This page JavaScript -->
     <!--chartis chart-->
-    <script src="{{url_for('fakenews/static', filename='assets/libs/chartist/dist/chartist.min.js')}}"></script>
+    <script src="{{url_for('static', filename='assets/libs/chartist/dist/chartist.min.js')}}"></script>
     <script
-      src="{{url_for('fakenews/static', filename='assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js')}}"></script>
-    <script src="{{url_for('fakenews/static', filename='dist/js/pages/dashboards/dashboard1.js')}}"></script>
+      src="{{url_for('static', filename='assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js')}}"></script>
+    <script src="{{url_for('static', filename='dist/js/pages/dashboards/dashboard1.js')}}"></script>
 </body>
 
 </html>
